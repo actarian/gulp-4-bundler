@@ -10,3 +10,14 @@
 
 ## Config
 > gulpfile.config.json
+
+```bash
+├── targets
+│   └── browser
+│       ├── compile
+│       │   ├── compile1
+│       │   └── compile2
+│       ├── bundle
+│       │   ├── bundle1
+│       │   └── bundle2
+```
