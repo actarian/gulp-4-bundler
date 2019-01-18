@@ -1,6 +1,6 @@
 # gulp-4-bunder
 
-[demo](https://actarian.github.io/gulp-4-bunder/)
+[demo](https://actarian.github.io/gulp-4-bundler/)
 
 ## Install
 > npm install
