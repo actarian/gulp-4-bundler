@@ -1,0 +1,21 @@
+@mixin aspect($w: 4, $h: 3) {
+	display: grid;
+
+	&:before,
+	&>* {
+		grid-area: 1 / 1 / 2 / 2;
+	}
+
+	&:before {
+		content: '';
+		display: block;
+		padding-top: calc(#{$h} / #{$w} * 100%);
+	}
+
+	/*
+	&::before {
+		content: url("data:image/svg+xml,%3Csvg viewBox='0 0 #{$w} #{$h}' xmlns='http://www.w3.org/2000/svg'%3E%3C/svg%3E");
+	}
+	*/
+
+}
