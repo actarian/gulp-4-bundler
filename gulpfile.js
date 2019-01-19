@@ -22,9 +22,8 @@ const fs = require('fs'),
 const { src, dest, watch, parallel, series } = require('gulp');
 
 const argv = yargs.argv;
-const detaultTarget = argv.target || 'browser';
+const target = argv.target || 'browser';
 
-let target = detaultTarget;
 let configuration = getJson('./gulpfile.config.json');
 
 const compileTask = parallel(compileScss, compileJs, compileTs); // compilePartials, compileSnippets
@@ -301,14 +300,16 @@ function watchAll() {
 
 // SERVE
 function serveTask() {
-	return src('./docs/')
-		.pipe(webserver({
-			port: 6001,
-			fallback: 'index.html',
-			open: true,
-			livereload: true,
-			directoryListing: false,
-		}));
+	const options = Object.assign({
+		src: './',
+		port: 6001,
+		fallback: 'index.html',
+		open: true,
+		livereload: true,
+		directoryListing: false,
+	}, configuration.options.server || {});
+	return src(options.src)
+		.pipe(webserver(options));
 }
 
 // UTILS

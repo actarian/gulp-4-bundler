@@ -10,12 +10,12 @@
 	"version": "0.1.0",
 	"browserslist": {
 		"development": [
-            "last 1 version"
-        ],
+			"last 1 version"
+		],
 		"production": [
-            "last 2 version",
-            "ie 11"
-        ]
+			"last 2 version",
+			"ie 11"
+		]
 	},
 	"scripts": {
 		"postinstall": "npm run start",
