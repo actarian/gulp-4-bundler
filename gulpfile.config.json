@@ -16,6 +16,13 @@
 			}],
 			"bundle": [{
 				"input": [
+					"node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css",
+					"node_modules/swiper/dist/css/swiper.css"
+				],
+				"output": "docs/css/vendors.css",
+				"minify": true
+			}, {
+				"input": [
 					"node_modules/jquery/dist/jquery.js",
 					"node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js",
 					"node_modules/gsap/src/uncompressed/easing/EasePack.js",
@@ -24,13 +31,6 @@
 					"node_modules/swiper/dist/js/swiper.js"
 				],
 				"output": "docs/js/vendors.js",
-				"minify": true
-			}, {
-				"input": [
-					"node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css",
-					"node_modules/swiper/dist/css/swiper.css"
-				],
-				"output": "docs/css/vendors.css",
 				"minify": true
 			}]
 		}

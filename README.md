@@ -15,13 +15,12 @@
 ├── targets
 │   └── browser
 │       ├── compile
+│       │   ├── bootstrap.scss
 │       │   ├── main.scss
 │       │   └── main.js
 │       └── bundle
 │           ├── vendors.css
-│           ├── vendors.js
-│           ├── main.css
-│           └── main.js
+│           └── vendors.js
 ├── options
 │   ├── tfs: false
 │   └── server
