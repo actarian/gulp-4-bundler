@@ -15,11 +15,20 @@
 ├── targets
 │   └── browser
 │       ├── compile
-│       │   ├── compile1
-│       │   └── compile2
-│       ├── bundle
-│       │   ├── bundle1
-│       │   └── bundle2
+│       │   ├── main.scss
+│       │   └── main.js
+│       └── bundle
+│           ├── vendors.css
+│           ├── vendors.js
+│           ├── main.css
+│           └── main.js
 ├── options
-│   └── tfs
+│   ├── tfs: false
+│   └── server
+│       ├── src: './',
+│       ├── port: 6001
+│       ├── fallback: 'index.html'
+│       ├── open: true
+│       ├── livereload: true
+│       └── directoryListing: false
 ```

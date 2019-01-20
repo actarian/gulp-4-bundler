@@ -2,33 +2,20 @@
 	"targets": {
 		"browser": {
 			"compile": [{
-				"inputFile": "src/sass/bootstrap.scss",
-				"outputFile": "docs/css/bootstrap.css"
+				"input": "src/sass/bootstrap.scss",
+				"output": "docs/css/bootstrap.css",
+				"minify": true
 			}, {
-				"inputFile": "src/sass/app.scss",
-				"outputFile": "docs/css/app.css"
+				"input": "src/sass/main.scss",
+				"output": "docs/css/main.css",
+				"minify": true
 			}, {
-				"inputFile": "src/app/app.js",
-				"outputFile": "docs/js/app.js"
+				"input": "src/js/main.js",
+				"output": "docs/js/main.js",
+				"minify": true
 			}],
 			"bundle": [{
-				"inputFiles": [
-					"docs/js/app.js"
-				],
-				"outputFileName": "docs/js/app.js",
-				"minify": {
-					"enabled": true
-				}
-			}, {
-				"inputFiles": [
-					"docs/css/app.css"
-				],
-				"outputFileName": "docs/css/app.css",
-				"minify": {
-					"enabled": true
-				}
-			}, {
-				"inputFiles": [
+				"input": [
 					"node_modules/jquery/dist/jquery.js",
 					"node_modules/@fancyapps/fancybox/dist/jquery.fancybox.js",
 					"node_modules/gsap/src/uncompressed/easing/EasePack.js",
@@ -36,34 +23,23 @@
 					"node_modules/gsap/src/uncompressed/TweenMax.js",
 					"node_modules/swiper/dist/js/swiper.js"
 				],
-				"outputFileName": "docs/js/vendors.js",
-				"minify": {
-					"enabled": true
-				}
+				"output": "docs/js/vendors.js",
+				"minify": true
 			}, {
-				"inputFiles": [
+				"input": [
 					"node_modules/@fancyapps/fancybox/dist/jquery.fancybox.css",
 					"node_modules/swiper/dist/css/swiper.css"
 				],
-				"outputFileName": "docs/css/vendors.css",
-				"minify": {
-					"enabled": true
-				}
-			}, {
-				"inputFiles": [
-					"docs/css/bootstrap.css"
-				],
-				"outputFileName": "docs/css/bootstrap.css",
-				"minify": {
-					"enabled": true
-				}
+				"output": "docs/css/vendors.css",
+				"minify": true
 			}]
 		}
 	},
 	"options": {
 		"tfs": false,
 		"server": {
-			"port": 41000
+			"src": "./docs",
+			"port": 9999
 		}
 	}
 }
