@@ -68,7 +68,6 @@ function compileJs(done) {
 			.pipe(plumber())
 			.pipe(through2.obj((file, enc, next) => {
 					browserify(file.path)
-						.plugin(tsify)
 						.transform('babelify', {
 							global: true,
 							presets: [
@@ -111,31 +110,42 @@ function compileJs(done) {
 }
 
 function compileTs(done) {
+	let options = {
+		global: true,
+		plugins: ['@babel/plugin-transform-flow-strip-types'],
+		presets: [
+			["@babel/preset-env", {
+				targets: {
+					chrome: '58',
+					ie: '11'
+				},
+			}],
+		],
+		extensions: ['.ts']
+	};
 	const items = getCompilers('.ts');
 	const tasks = items.map(item => function itemTask(done) {
 		logger.log(item.input);
 		return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 			.pipe(plumber())
 			.pipe(through2.obj((file, enc, next) => {
-					browserify(file.path)
-						.plugin(tsify)
-						.transform('babelify', { plugins: ['@babel/plugin-transform-flow-strip-types'], extensions: ['.ts'] })
-						.bundle((error, response) => {
-							if (error) {
-								logger.error('compile:ts', error);
-							} else {
-								file.contents = response;
-								next(null, file);
-							}
-						})
-						.on('error', (error) => {
-							logger.error('compile:ts', error.toString());
-						});
-				}
-				/*, (done) => {
-					logger.log('through2.done', error);
-				}*/
-			))
+				browserify(file.path)
+					.plugin(tsify)
+					.transform('babelify', options)
+					.bundle((error, response) => {
+						if (error) {
+							logger.error('compile:ts', error);
+						} else {
+							file.contents = response;
+							next(null, file);
+						}
+					})
+					.on('error', (error) => {
+						logger.error('compile:ts', error.toString());
+					});
+			}, (done) => {
+				done();
+			}))
 			.pipe(rename(item.output))
 			.pipe(gulpif(configuration.options.tfs, tfs.checkout()))
 			.pipe(dest('.', { sourcemaps: true }))
@@ -221,7 +231,7 @@ function bundleCss(done) {
 	const tasks = items.map(item => function itemTask(done) {
 		return doCssBundle(item);
 	});
-	return parallel(...tasks)(done);
+	return tasks.length ? parallel(...tasks)(done) : done();
 }
 
 function bundleJs(done) {
@@ -229,7 +239,7 @@ function bundleJs(done) {
 	const tasks = items.map(item => function itemTask(done) {
 		return doJsBundle(item);
 	});
-	return parallel(...tasks)(done);
+	return tasks.length ? parallel(...tasks)(done) : done();
 }
 
 function doCssBundle(item) {
