@@ -71,13 +71,13 @@ function compileJs(done) {
 						.transform('babelify', {
 							global: true,
 							presets: [
-                            ["@babel/preset-env", {
+							["@babel/preset-env", {
 									targets: {
 										chrome: '58',
 										ie: '11'
 									},
-                            }]
-                        ],
+							}]
+						],
 							extensions: ['.js']
 						})
 						.bundle((error, response) => {
@@ -274,16 +274,15 @@ function doJsBundle(item) {
 function tfsCheckout(skip) {
 	return gulpif(!skip && configuration.options.tfs,
 		through2.obj((file, enc, callback) => {
-			const filePath = file.path; // path.join(__dirname, file.path);
-			// console.log('tfsCheckout', file.path, filePath);
+			// console.log('tfsCheckout', file.path);
 			if (fs.existsSync(file.path)) {
-				tfs('checkout', [filePath], null, (responseError, response) => {
+				tfs('checkout', [file.path], null, (responseError, response) => {
 					callback(null, file);
 					if (responseError) {
-						console.log(responseError.error);
+						console.error(responseError.error);
 						return;
 					}
-					// console.log(response.message);
+					logger.log('checkout', file.path, response.message);
 				});
 			} else {
 				callback(null, file);
