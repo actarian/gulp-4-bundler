@@ -13,7 +13,7 @@ const fs = require('fs'),
 	rename = require('gulp-rename'),
 	scss = require('gulp-sass'),
 	through2 = require('through2'),
-	tfs = require('gulp-tfs'),
+	tfs = require('tfs'),
 	tsify = require('tsify'),
 	uglify = require('gulp-uglify'),
 	webserver = require('gulp-webserver'),
@@ -50,12 +50,12 @@ function compileScss(done) {
 			}))
 			.pipe(autoprefixer())
 			.pipe(rename(item.output))
-			.pipe(gulpif(configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout())
 			.pipe(dest('.', { sourcemaps: true }))
 			.on('end', () => logger.log('compile', item.output))
 			.pipe(gulpif(item.minify, cssmin()))
 			.pipe(gulpif(item.minify, rename({ extname: '.min.css' })))
-			.pipe(gulpif(item.minify && configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout(!item.minify))
 			.pipe(gulpif(item.minify, dest('.', { sourcemaps: true })));
 	});
 	return tasks.length ? parallel(...tasks)(done) : done();
@@ -98,12 +98,12 @@ function compileJs(done) {
 				}*/
 			))
 			.pipe(rename(item.output))
-			.pipe(gulpif(configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout())
 			.pipe(dest('.', { sourcemaps: true }))
 			.on('end', () => logger.log('compile', item.output))
 			.pipe(gulpif(item.minify, uglify()))
 			.pipe(gulpif(item.minify, rename({ extname: '.min.js' })))
-			.pipe(gulpif(item.minify && configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout(!item.minify))
 			.pipe(gulpif(item.minify, dest('.', { sourcemaps: true })));
 	});
 	return tasks.length ? parallel(...tasks)(done) : done();
@@ -147,12 +147,12 @@ function compileTs(done) {
 				done();
 			}))
 			.pipe(rename(item.output))
-			.pipe(gulpif(configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout())
 			.pipe(dest('.', { sourcemaps: true }))
 			.on('end', () => logger.log('compile', item.output))
 			.pipe(gulpif(item.minify, uglify()))
 			.pipe(gulpif(item.minify, rename({ extname: '.min.js' })))
-			.pipe(gulpif(item.minify && configuration.options.tfs, tfs.checkout()))
+			.pipe(tfsCheckout(!item.minify))
 			.pipe(gulpif(item.minify, dest('.', { sourcemaps: true })));
 	});
 	return tasks.length ? parallel(...tasks)(done) : done();
@@ -247,12 +247,12 @@ function doCssBundle(item) {
 	return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 		.pipe(plumber())
 		.pipe(gulpif(!skip, concat(item.output)))
-		.pipe(gulpif(!skip && configuration.options.tfs, tfs.checkout()))
+		.pipe(tfsCheckout(skip))
 		.pipe(gulpif(!skip, dest('.')))
 		.on('end', () => logger.log('bundle', item.output))
 		.pipe(gulpif(item.minify, cssmin()))
 		.pipe(gulpif(item.minify, rename({ extname: '.min.css' })))
-		.pipe(gulpif(item.minify && configuration.options.tfs, tfs.checkout()))
+		.pipe(tfsCheckout(!item.minify))
 		.pipe(gulpif(item.minify, dest('.', { sourcemaps: true })));
 }
 
@@ -261,13 +261,35 @@ function doJsBundle(item) {
 	return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 		.pipe(plumber())
 		.pipe(gulpif(!skip, concat(item.output)))
-		.pipe(gulpif(!skip && configuration.options.tfs, tfs.checkout()))
+		.pipe(tfsCheckout(skip))
 		.pipe(gulpif(!skip, dest('.')))
 		.on('end', () => logger.log('bundle', item.output))
 		.pipe(gulpif(item.minify, uglify()))
 		.pipe(gulpif(item.minify, rename({ extname: '.min.js' })))
-		.pipe(gulpif(item.minify && configuration.options.tfs, tfs.checkout()))
+		.pipe(tfsCheckout(!item.minify))
 		.pipe(gulpif(item.minify, dest('.', { sourcemaps: true })));
+}
+
+// TFS
+function tfsCheckout(skip) {
+	return gulpif(!skip && configuration.options.tfs,
+		through2.obj((file, enc, callback) => {
+			const filePath = file.path; // path.join(__dirname, file.path);
+			// console.log('tfsCheckout', file.path, filePath);
+			if (fs.existsSync(file.path)) {
+				tfs('checkout', [filePath], null, (responseError, response) => {
+					callback(null, file);
+					if (responseError) {
+						console.log(responseError.error);
+						return;
+					}
+					// console.log(response.message);
+				});
+			} else {
+				callback(null, file);
+			}
+		})
+	);
 }
 
 // WATCH
