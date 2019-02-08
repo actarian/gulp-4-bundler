@@ -53,13 +53,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 
+var _utils = _interopRequireDefault(require("./utils"));
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-/* jshint esversion: 6 */
 var Dom =
 /*#__PURE__*/
 function () {
@@ -130,7 +133,7 @@ function () {
       document.addEventListener('mousedown', onMouseDown);
 
       var onScroll = function onScroll() {
-        var now = Utils.now();
+        var now = _utils.default.now();
 
         if (Dom.lastScrollTime) {
           var diff = now - Dom.lastScrollTime;
@@ -171,5 +174,133 @@ function () {
 }();
 
 exports.default = Dom;
+
+},{"./utils":3}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = void 0;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+/* jshint esversion: 6 */
+
+/* global window, document */
+var Utils =
+/*#__PURE__*/
+function () {
+  function Utils() {
+    _classCallCheck(this, Utils);
+  }
+
+  _createClass(Utils, null, [{
+    key: "now",
+    value: function now() {
+      return Date.now ? Date.now() : new Date().getTime();
+    }
+  }, {
+    key: "performanceNow",
+    value: function performanceNow() {
+      return performance ? performance.timing.navigationStart + performance.now() : Utils.now();
+    }
+  }, {
+    key: "throttle",
+    value: function throttle(callback, wait, options) {
+      var context = null,
+          result = null,
+          args = null,
+          timeout = null;
+      var previous = 0;
+
+      if (!options) {
+        options = {};
+      }
+
+      var later = function later() {
+        previous = options.leading === false ? 0 : Utils.now();
+        timeout = null;
+        result = callback.apply(context, args);
+
+        if (!timeout) {
+          context = args = null;
+        }
+      };
+
+      return function () {
+        context = this;
+        args = arguments;
+        var now = Utils.now();
+
+        if (!previous && options.leading === false) {
+          previous = now;
+        }
+
+        var remaining = wait - (now - previous);
+
+        if (remaining <= 0 || remaining > wait) {
+          if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+          }
+
+          previous = now;
+          result = callback.apply(context, args);
+
+          if (!timeout) {
+            context = args = null;
+          }
+        } else if (!timeout && options.trailing !== false) {
+          timeout = setTimeout(later, remaining);
+        }
+
+        return result;
+      };
+    }
+  }, {
+    key: "debounce",
+    value: function debounce(callback) {
+      var _this = this,
+          _arguments = arguments;
+
+      var wait = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 10;
+      var immediate = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+      var timeout;
+      return function () {
+        var context = _this,
+            args = _arguments;
+
+        var later = function later() {
+          timeout = null;
+
+          if (!immediate) {
+            callback.apply(context, args);
+          }
+        };
+
+        var callNow = immediate && !timeout;
+
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+
+        timeout = setTimeout(later, wait);
+
+        if (callNow) {
+          callback.apply(context, args);
+        }
+      };
+    }
+  }]);
+
+  return Utils;
+}();
+
+exports.default = Utils;
 
 },{}]},{},[1]);
