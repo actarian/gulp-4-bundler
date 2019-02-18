@@ -285,7 +285,11 @@ function tfsCheckout(skip) {
 		through2.obj((file, enc, callback) => {
 			// console.log('tfsCheckout', file.path);
 			if (fs.existsSync(file.path)) {
-				tfs('checkout', [file.path], null, (responseError, response) => {
+				const paths = [file.path];
+				if (fs.existsSync(file.path + '.map')) {
+					paths.push(file.path + '.map');
+				}
+				tfs('checkout', paths, null, (responseError, response) => {
 					callback(null, file);
 					if (responseError) {
 						console.error(responseError.error);
