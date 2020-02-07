@@ -192,6 +192,7 @@ button,
     pointer-events: none; }
 
 .btn--link {
+  padding: 0 8px;
   font-weight: var(--font-medium); }
   .btn--link:hover {
     background: var(--background-tertiary); }
