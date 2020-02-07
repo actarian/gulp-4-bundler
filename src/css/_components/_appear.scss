@@ -1,0 +1,15 @@
+.appear {
+	@media screen {
+		&:not(.print) {
+			opacity: 0 !important;
+			transform: translateY(50px) !important;
+			transition: 700ms 0ms cubic-bezier(0.320, 0.000, 0.290, 0.990) !important;
+			transition-property: transform, opacity;
+
+			&.appeared {
+				opacity: 1 !important;
+				transform: translateY(0) scale(1.0, 1.0) !important;
+			}
+		}
+	}
+}

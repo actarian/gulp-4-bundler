@@ -1,0 +1,98 @@
+﻿{
+	"targets": {
+		"browser": {
+			"compile": [{
+				"input": "src/*.html",
+				"output": "docs/",
+				"minify": true
+			}, {
+				"input": "src/css/main.scss",
+				"output": "docs/css/main.css",
+				"minify": true
+			}, {
+				"input": "src/css/main-cssvars.scss",
+				"output": "docs/css/main-cssvars.css",
+				"minify": true
+			}, {
+				"input": "src/js/rxcomp/main.js",
+				"output": "docs/js/rxcomp/main.js",
+				"rollup": {
+					"output": {
+						"format": "umd",
+						"globals": {
+							"gsap": "gsap",
+							"rxjs": "rxjs",
+							"rxjs/operators": "rxjs.operators",
+							"rxcomp": "rxcomp",
+							"rxcomp-form": "rxcomp-form"
+						},
+						"external": ["gsap", "rxjs", "rxcomp", "rxcomp-form"]
+					}
+				},
+				"minify": true
+			}, {
+				"input": "src/js/typescript/main.ts",
+				"output": "docs/js/typescript/main.js",
+				"rollup": {
+					"output": {
+						"format": "umd",
+						"globals": {
+							"gsap": "gsap",
+							"rxjs": "rxjs",
+							"rxjs/operators": "rxjs.operators"
+						},
+						"external": ["gsap", "rxjs"]
+					}
+				},
+				"minify": true
+			}, {
+				"input": "src/js/vanilla/main.js",
+				"output": "docs/js/vanilla/main.js",
+				"rollup": {
+					"output": {
+						"format": "umd",
+						"globals": {
+							"gsap": "gsap",
+							"rxjs": "rxjs",
+							"rxjs/operators": "rxjs.operators"
+						},
+						"external": ["gsap", "rxjs"]
+					}
+				},
+				"minify": true
+			}],
+			"bundle": [{
+				"input": [
+					"node_modules/swiper/css/swiper.css"
+				],
+				"output": "docs/css/vendors.css",
+				"minify": true
+			}, {
+				"input": [
+					"node_modules/rxjs/bundles/rxjs.umd.js",
+					"node_modules/rxcomp/dist/rxcomp.js",
+					"node_modules/rxcomp-form/dist/rxcomp-form.js",
+					"node_modules/swiper/js/swiper.js",
+					"node_modules/gsap/dist/EasePack.js",
+					"node_modules/gsap/dist/gsap.js"
+				],
+				"output": "docs/js/vendors.js",
+				"minify": true
+			}],
+			"resource": [{
+				"input": [
+					"node_modules/@fortawesome/fontawesome-free/**/*.*"
+				],
+				"output": "docs/fonts/fontawesome/"
+			}]
+		}
+	},
+	"tfs": false,
+	"server": {
+		"root": "./docs",
+		"path": "/gulp-4-bundler/",
+		"host": "localhost",
+		"port": 9999,
+		"log": false
+	}
+}

@@ -1,0 +1,14 @@
+/*
+* Main
+*/
+
+main {
+	@include media-up(sm) {
+		padding: 80px 0;
+		min-height: calc(100vh - 62px);
+	}
+
+	@include media-down(xs) {
+		min-height: 100vh;
+	}
+}

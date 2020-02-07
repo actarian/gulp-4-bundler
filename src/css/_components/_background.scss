@@ -1,0 +1,50 @@
+.background--gradient {
+	background: rgb(255, 255, 255);
+	background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(185, 189, 205, 1) 100%);
+	// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#b9bdcd',GradientType=0 );
+}
+
+.background--gradient-inverted {
+	background: rgb(255, 255, 255);
+	background: linear-gradient(to bottom, rgba(185, 189, 205, 1) 0%, rgba(255, 255, 255, 1) 100%);
+	// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#b9bdcd',GradientType=0 );
+}
+
+.background--gradient,
+.background--gradient-inverted {
+
+	.btn--link {
+
+		&,
+		&:active,
+		&:visited {
+			span {
+				color: $foreground;
+			}
+		}
+
+		&:focus,
+		&:hover {
+			span {
+				background: $foreground;
+				color: $foreground-negative;
+			}
+		}
+
+	}
+}
+
+.background--secondary {
+	background: $background-secondary;
+	color: $foreground-secondary;
+}
+
+.background--tertiary {
+	background: $background-tertiary;
+	color: $foreground-tertiary;
+}
+
+.background--negative {
+	background: $background-negative;
+	color: $foreground-negative;
+}

@@ -2,7 +2,7 @@
 
 A simple compiler & bundler with building targets, and serve option with livereload.  
 
-> [demo](https://actarian.github.io/gulp-4-bundler/)
+> [Demo](https://actarian.github.io/gulp-4-bundler/)
 
 ## Requirements
 
@@ -53,33 +53,69 @@ ___
 
 You can configure building targets, compilers and bundlers with an easy json configuration file.  
 
-As in the example [gulpfile.config.json](https://github.com/actarian/gulp-4-bundler/blob/master/gulpfile.config.json)
+As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bundler/blob/master/gulpfile-config.json)
 
 ___
 
-## gulpfile.config.json
+## gulpfile-config.json
 
-> gulpfile.config.json
+> gulpfile-config.json
 
-```bash
-├── targets
-│   ├── browser
-│   │   ├── compile
-│   │   │   ├── bootstrap.scss
-│   │   │   ├── main.scss
-│   │   │   └── main.js
-│   │   └── bundle
-│   │       ├── vendors.css
-│   │       └── vendors.js
-│   └── dist
-│       └── ...
-└── options
-    ├── tfs: false
-    └── server
-        ├── src: './',
-        ├── port: 6001
-        ├── fallback: 'index.html'
-        ├── open: true
-        ├── livereload: true
-        └── directoryListing: false
+```json
+{
+	"targets": {
+		"browser": {
+			"compile": [{
+				"input": "src/*.html",
+				"output": "docs/",
+				"minify": true
+			}, {
+				"input": "src/css/main.scss",
+				"output": "docs/css/main.css",
+				"minify": true
+			}, {
+				"input": "src/js/main.js",
+				"output": "docs/js/main.js",
+				"rollup": {
+					"output": {
+						"format": "umd",
+						"globals": {
+							"rxjs": "rxjs",
+							"rxjs/operators": "rxjs.operators"
+						},
+						"external": ["rxjs"]
+					}
+				},
+				"minify": true
+			}],
+			"bundle": [{
+				"input": [
+					"node_modules/swiper/dist/css/swiper.css"
+				],
+				"output": "docs/css/vendors.css",
+				"minify": true
+			}, {
+				"input": [
+					"node_modules/swiper/dist/js/swiper.js"
+				],
+				"output": "docs/js/vendors.js",
+				"minify": true
+			}],
+			"resource": [{
+				"input": [
+					"node_modules/@fortawesome/fontawesome-free/**/*.*"
+				],
+				"output": "docs/fonts/fontawesome/"
+			}]
+		}
+	},
+	"tfs": false,
+	"server": {
+		"root": "./docs",
+		"path": "/gulp-4-bundler/",
+		"host": "localhost",
+		"port": 9999,
+		"log": false
+	}
+}
 ```

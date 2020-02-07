@@ -1,10 +1,13 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en" ng-app>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
+	<base href="/gulp-4-bundler/">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Gulp 4 Bundler</title>
+	<title>
+		Gulp4Bundler
+	</title>
 	<meta name="Content-Language" content="en" />
 	<meta name="robots" content="noindex,nofollow" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
@@ -13,31 +16,55 @@
 	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<meta name="mobile-web-app-capable" content="yes">
 	<link href="favicon.ico" rel="shortcut icon" type="image/ico" />
-	<link rel="stylesheet" href="css/bootstrap.min.css" />
-	<link rel="stylesheet" href="css/vendors.min.css" />
-	<link rel="stylesheet" href="css/main.min.css" />
+	<link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/gulp-4-bundler/css/vendors.min.css" />
+	<!-- style without cssvars -->
+	<link rel="stylesheet" href="/gulp-4-bundler/css/main.min.css" />
+	<!-- style with cssvars -->
+	<!-- <link rel="stylesheet" href="/gulp-4-bundler/css/main-cssvars.min.css" /> -->
+<!-- start css -->
+<!-- additional css here -->
+
+<!-- end css -->
 </head>
 
-<body>
-
-	<ng-include src="'partials/header.html'"></ng-include>
-
-	<div class="page">
-		<!-- HERO -->
-		<section class="section section--hero">
-			<div class="container">
-				<div class="h1">Hello Bundlers!</div>
-			</div>
-		</section>
+<body class="page-class">
+<!-- start header.html-->
+<header>
+	<div class="container-fluid">
+		<strong>Gulp 4 Bundler</strong>
 	</div>
+</header>
 
-	<!-- angular può essere rimosso caricando i partials server side -->
-	<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
-	<!-- angular può essere rimosso caricando i partials server side -->
+<!-- end header.html-->
+<!-- start main -->
+<main class="page" app-component>
+	<!-- HERO -->
+	<section class="section section--hero">
+		<div class="container">
+			<div class="h1">Hello Bundlers!</div>
+		</div>
+	</section>
+</main>
 
-	<script src="js/vendors.min.js"></script>
-	<script src="js/main.min.js"></script>
+<!-- end main -->
+<!-- start footer.html-->
+<footer>
+	<div class="container-fluid">
+		<strong>Gulp 4 Bundler</strong>
+	</div>
+</footer>
 
+<!-- end footer.html-->
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es5%2CArray.prototype.find%2CObject.assign"></script>
+	<script src="/gulp-4-bundler/js/vendors.min.js"></script>
+	<script src="/gulp-4-bundler/js/rxcomp/main.min.js"></script>
+	<script src="/gulp-4-bundler/js/typescript/main.min.js"></script>
+	<script src="/gulp-4-bundler/js/vanilla/main.min.js"></script>
+<!-- start js -->
+<!-- additional js here -->
+
+<!-- end js -->
 </body>
 
 </html>

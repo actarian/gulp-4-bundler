@@ -1,0 +1,23 @@
+﻿@import "_mixins/aspect";
+@import "_mixins/breakpoints";
+@import "_mixins/functions";
+@import "_mixins/grid";
+@import "_mixins/scrollbar";
+
+@mixin animation-delay($item, $count) {
+	$delay: 40ms;
+	$duration: 350ms;
+
+	@for $i from 1 through $count {
+		#{$item}:nth-of-type(#{$i}) {
+
+			&>a,
+			&>span {
+				animation-delay: $delay * $i;
+				animation-duration: $duration; // ($duration + ($i - 1) * 0.1);
+			}
+		}
+
+		// @debug $i;
+	}
+}
