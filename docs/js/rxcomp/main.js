@@ -6,7 +6,7 @@
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(require('rxcomp'), require('rxcomp-form')) :
-  typeof define === 'function' && define.amd ? define('main', ['rxcomp', 'rxcomp-form'], factory) :
+  typeof define === 'function' && define.amd ? define(['rxcomp', 'rxcomp-form'], factory) :
   (global = global || self, factory(global.rxcomp, global['rxcomp-form']));
 }(this, (function (rxcomp, rxcompForm) { 'use strict';
 

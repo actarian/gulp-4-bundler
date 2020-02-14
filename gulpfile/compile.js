@@ -1,27 +1,23 @@
 const autoprefixer = require('gulp-autoprefixer'),
-	babelPresetEnv = require('@babel/preset-env'),
 	connect = require('gulp-connect'),
 	cssnano = require('cssnano'),
 	filter = require('gulp-filter'),
 	gulpif = require('gulp-if'),
 	htmlExtend = require('gulp-html-extend'),
-	path = require('path'),
+	htmlmin = require('gulp-htmlmin'),
 	plumber = require('gulp-plumber'),
 	postcss = require('gulp-postcss'),
 	rename = require('gulp-rename'),
-	rollup = require('gulp-better-rollup'),
 	scss = require('gulp-sass'),
-	terser = require('gulp-terser'),
-	rollupPluginBabel = require('rollup-plugin-babel'),
-	rollupPluginCommonJs = require('@rollup/plugin-commonjs'),
-	rollupPluginLicense = require('rollup-plugin-license'),
-	rollupPluginNodeResolve = require('@rollup/plugin-node-resolve'),
-	rollupPluginTypescript = require('@rollup/plugin-typescript');
+	terser = require('gulp-terser');
 
 const { dest, parallel, src, watch } = require('gulp');
 
 const log = require('./logger');
 const tfsCheckout = require('./tfs');
+
+const { rollup_, rollupInput_, rollupOutput_ } = require('./rollup');
+const { typescript_, typescriptInput_, typescriptOutput_ } = require('./typescript');
 
 // COMPILERS
 function compileScss_(config, done) {
@@ -59,48 +55,33 @@ function compileJs_(config, done) {
 	const tasks = [];
 	items.forEach(item => {
 		tasks.push(function itemTask(done) {
-			return compileRollupJs_(config, item);
+			return compileRollup_(config, item);
 		});
 	});
 	return tasks.length ? parallel(...tasks)(done) : done();
 }
 
-function compileRollupJs_(config, item) {
-	const rollupInput = {
-		plugins: [
-			rollupPluginCommonJs(),
-			rollupPluginBabel({
-				presets: [
-					[babelPresetEnv, { modules: false, loose: true }]
-				],
-				exclude: 'node_modules/**' // only transpile our source code
-				// babelrc: false,
-			}),
-			rollupPluginLicense({
-				banner: `@license <%= pkg.name %> v<%= pkg.version %>
-				(c) <%= moment().format('YYYY') %> <%= pkg.author %>
-				License: <%= pkg.license %>`,
-			}),
-		]
-	};
-	const rollupOutput = Object.assign({
-			file: item.output,
-			name: path.basename(item.output, '.js'),
-			format: 'umd',
-			globals: {},
-			external: []
-		},
-		(item.rollup ? (item.rollup.output || {}) : {})
-	);
-	// console.log(rollupOutput);
+function compileTs_(config, done) {
+	const items = compiles_(config, '.ts');
+	const tasks = [];
+	items.forEach(item => {
+		tasks.push(function itemTask(done) {
+			return compileRollup_(config, item);
+		});
+	});
+	return tasks.length ? parallel(...tasks)(done) : done();
+}
+
+function compileRollup_(config, item) {
+	const outputs = rollupOutput_(item.input, item.output);
 	return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 		.pipe(plumber())
-		.pipe(rollup(rollupInput, rollupOutput))
-		.pipe(rename(item.output))
+		.pipe(rollup_(config, item))
+		// .pipe(rename(item.output))
 		.pipe(tfsCheckout(config))
 		.pipe(dest('.', item.minify ? null : { sourcemaps: '.' }))
 		.pipe(filter('**/*.js'))
-		.on('end', () => log('Compile', item.output))
+		.on('end', () => log('Compile', outputs.map(x => x.file).join(', ')))
 		.pipe(gulpif(item.minify, terser()))
 		.pipe(gulpif(item.minify, rename({ extname: '.min.js' })))
 		.pipe(tfsCheckout(config, !item.minify))
@@ -109,58 +90,24 @@ function compileRollupJs_(config, item) {
 		.pipe(connect.reload());
 }
 
-function compileTs_(config, done) {
-	const items = compiles_(config, '.ts');
-	const tasks = [];
-	items.forEach(item => {
-		tasks.push(function itemTask(done) {
-			return compileRollupTs_(config, item);
-		});
-	});
-	return tasks.length ? parallel(...tasks)(done) : done();
-}
-
-function compileRollupTs_(config, item) {
-	const rollupInput = {
-		plugins: [
-			rollupPluginTypescript(),
-			rollupPluginCommonJs(),
-			rollupPluginBabel({
-				presets: [
-					[babelPresetEnv, { modules: false, loose: true }]
-				],
-				exclude: 'node_modules/**' // only transpile our source code
-				// babelrc: false,
-			}),
-			rollupPluginLicense({
-				banner: `@license <%= pkg.name %> v<%= pkg.version %>
-				(c) <%= moment().format('YYYY') %> <%= pkg.author %>
-				License: <%= pkg.license %>`,
-			}),
-		]
-	};
-	const rollupOutput = Object.assign({
-			file: item.output,
-			name: path.basename(item.output, '.js'),
-			format: 'umd',
-			globals: {},
-			external: []
-		},
-		(item.rollup ? (item.rollup.output || {}) : {})
-	);
-	// console.log(rollupOutput);
+function compileTypescript_(config, item) {
+	const outputs = rollupOutput_(item.input, item.output);
 	return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 		.pipe(plumber())
-		.pipe(rollup(rollupInput, rollupOutput))
-		.pipe(rename(item.output))
+		.pipe(typescript_(config, item))
+		/*
+		// .pipe(rename(item.output))
 		.pipe(tfsCheckout(config))
 		.pipe(dest('.', item.minify ? null : { sourcemaps: '.' }))
+		*/
 		.pipe(filter('**/*.js'))
-		.on('end', () => log('Compile', item.output))
+		.on('end', () => log('Compile', outputs.map(x => x.file).join(', ')))
+		/*
 		.pipe(gulpif(item.minify, terser()))
 		.pipe(gulpif(item.minify, rename({ extname: '.min.js' })))
 		.pipe(tfsCheckout(config, !item.minify))
 		.pipe(gulpif(item.minify, dest('.', { sourcemaps: '.' })))
+		*/
 		.pipe(filter('**/*.js'))
 		.pipe(connect.reload());
 }
@@ -171,6 +118,7 @@ function compileHtml_(config, done) {
 		return src(item.input, { base: '.', allowEmpty: true, sourcemaps: true })
 			.pipe(plumber())
 			.pipe(htmlExtend({ annotations: true, verbose: false }))
+			.pipe(gulpif(item.minify, htmlmin({ collapseWhitespace: true })))
 			.pipe(rename(function(path) {
 				return {
 					dirname: item.output,
@@ -218,6 +166,23 @@ function compileWatcher_(config) {
 	return [scss, js, ts, html];
 }
 
+function compileCssWatcher_(config) {
+	const scss = watch(compilesGlobs_(config, '.scss'), function compileScss(done) {
+		compileScss_(config, done);
+	}).on('change', logWatch);
+	return [scss];
+}
+
+function compileJsWatcher_(config) {
+	const js = watch(compilesGlobs_(config, '.js'), function compileJs(done) {
+		compileJs_(config, done);
+	}).on('change', logWatch);
+	const ts = watch(compilesGlobs_(config, '.ts'), function compileTs(done) {
+		compileTs_(config, done);
+	}).on('change', logWatch);
+	return [js, ts];
+}
+
 function logWatch(path, stats) {
 	log('Changed', path);
 }
@@ -225,9 +190,10 @@ function logWatch(path, stats) {
 module.exports = {
 	compileScss_,
 	compileJs_,
-	compileRollupJs_,
 	compileTs_,
 	compileHtml_,
 	compilesGlobs_,
-	compileWatcher_
+	compileWatcher_,
+	compileCssWatcher_,
+	compileJsWatcher_
 };

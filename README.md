@@ -6,47 +6,85 @@ A simple compiler & bundler with building targets, and serve option with liverel
 
 ## Requirements
 
-#### [NodeJs](https://nodejs.org/it/)
-* `node.js -v`  
+### [NodeJs](https://nodejs.org/it/)
+```
+node.js -v
+```
+___
 
-#### [Npm](https://www.npmjs.com/)
-* `npm -v`
+### [Npm](https://www.npmjs.com/)
+```
+npm -v
+```
+___
+### Updating Npm on Mac
+```
+npm install npm@latest -g
+```
+___
+### Updating Npm on Windows
+[npm-windows-upgrade](https://www.npmjs.com/package/npm-windows-upgrade) 
+___
 
-Upgrading Npm on mac
-* `npm install npm@latest -g`
+### [Gulp CLI](https://github.com/angular/angular-cli) version 4.0.0
+```
+npm install gulp-cli -g
+```
+___
 
-Upgrading Npm on windows
-* [npm-windows-upgrade](https://www.npmjs.com/package/npm-windows-upgrade) 
+### Install packages
+```
+npm install
+```
+___
+
+### Build, Serve & Watch 
+```
+gulp
+```
 
 ___
 
-#### [Gulp CLI](https://github.com/angular/angular-cli) version 4.0.0
-* `npm install gulp-cli -g`  
-
+### Build Only
+```
+gulp build
+```
 ___
 
-## Install packages
-
-* `npm install`
-
+### Build & Watch 
+```
+gulp start
+```
 ___
 
-## Build, Serve & Watch 
-
-* `gulp`
-
+### Build Js Only
+```
+gulp buildJs
+```
 ___
 
-## Build Only
-
-* `gulp build`
-
+### Build Js & Watch 
+```
+gulp startJs
+```
 ___
 
-## Build Specific Target
+### Build Css Only
+```
+gulp buildCss
+```
+___
 
-* `gulp build --target dist`
+### Build Css & Watch 
+```
+gulp startCss
+```
+___
 
+### Build Specific Target
+```
+gulp build --target dist
+```
 ___
 
 ## Configuration
@@ -74,29 +112,65 @@ ___
 				"output": "docs/css/main.css",
 				"minify": true
 			}, {
-				"input": "src/js/main.js",
-				"output": "docs/js/main.js",
-				"rollup": {
-					"output": {
-						"format": "umd",
-						"globals": {
-							"rxjs": "rxjs",
-							"rxjs/operators": "rxjs.operators"
-						},
-						"external": ["rxjs"]
-					}
+				"input": "src/css/main-cssvars.scss",
+				"output": "docs/css/main-cssvars.css",
+				"minify": true
+			}, {
+				"input": "src/js/rxcomp/main.js",
+				"output": {
+					"file": "docs/js/rxcomp/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators",
+						"rxcomp": "rxcomp",
+						"rxcomp-form": "rxcomp-form"
+					},
+					"external": ["gsap", "rxjs", "rxcomp", "rxcomp-form"]
+				},
+				"minify": true
+			}, {
+				"input": "src/js/typescript/main.ts",
+				"output": {
+					"file": "docs/js/typescript/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators"
+					},
+					"external": ["gsap", "rxjs"]
+				},
+				"minify": true
+			}, {
+				"input": "src/js/vanilla/main.js",
+				"output": {
+					"file": "docs/js/vanilla/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators"
+					},
+					"external": ["gsap", "rxjs"]
 				},
 				"minify": true
 			}],
 			"bundle": [{
 				"input": [
-					"node_modules/swiper/dist/css/swiper.css"
+					"node_modules/swiper/css/swiper.css"
 				],
 				"output": "docs/css/vendors.css",
 				"minify": true
 			}, {
 				"input": [
-					"node_modules/swiper/dist/js/swiper.js"
+					"node_modules/rxjs/bundles/rxjs.umd.js",
+					"node_modules/rxcomp/dist/rxcomp.js",
+					"node_modules/rxcomp-form/dist/rxcomp-form.js",
+					"node_modules/swiper/js/swiper.js",
+					"node_modules/gsap/dist/EasePack.js",
+					"node_modules/gsap/dist/gsap.js"
 				],
 				"output": "docs/js/vendors.js",
 				"minify": true

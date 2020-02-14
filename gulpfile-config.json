@@ -15,49 +15,43 @@
 				"minify": true
 			}, {
 				"input": "src/js/rxcomp/main.js",
-				"output": "docs/js/rxcomp/main.js",
-				"rollup": {
-					"output": {
-						"format": "umd",
-						"globals": {
-							"gsap": "gsap",
-							"rxjs": "rxjs",
-							"rxjs/operators": "rxjs.operators",
-							"rxcomp": "rxcomp",
-							"rxcomp-form": "rxcomp-form"
-						},
-						"external": ["gsap", "rxjs", "rxcomp", "rxcomp-form"]
-					}
+				"output": {
+					"file": "docs/js/rxcomp/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators",
+						"rxcomp": "rxcomp",
+						"rxcomp-form": "rxcomp-form"
+					},
+					"external": ["gsap", "rxjs", "rxcomp", "rxcomp-form"]
 				},
 				"minify": true
 			}, {
 				"input": "src/js/typescript/main.ts",
-				"output": "docs/js/typescript/main.js",
-				"rollup": {
-					"output": {
-						"format": "umd",
-						"globals": {
-							"gsap": "gsap",
-							"rxjs": "rxjs",
-							"rxjs/operators": "rxjs.operators"
-						},
-						"external": ["gsap", "rxjs"]
-					}
+				"output": {
+					"file": "docs/js/typescript/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators"
+					},
+					"external": ["gsap", "rxjs"]
 				},
 				"minify": true
 			}, {
 				"input": "src/js/vanilla/main.js",
-				"output": "docs/js/vanilla/main.js",
-				"rollup": {
-					"output": {
-						"format": "umd",
-						"globals": {
-							"gsap": "gsap",
-							"rxjs": "rxjs",
-							"rxjs/operators": "rxjs.operators"
-						},
-						"external": ["gsap", "rxjs"]
-					}
+				"output": {
+					"file": "docs/js/vanilla/main.js",
+					"format": "umd",
+					"globals": {
+						"gsap": "gsap",
+						"rxjs": "rxjs",
+						"rxjs/operators": "rxjs.operators"
+					},
+					"external": ["gsap", "rxjs"]
 				},
 				"minify": true
 			}],
