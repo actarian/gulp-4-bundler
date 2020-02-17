@@ -114,12 +114,12 @@
 			"bundle": []
 		}
 	},
-	"tfs": false,
 	"server": {
 		"root": "./docs",
 		"path": "/gulp-4-bundler/",
 		"host": "localhost",
 		"port": 9999,
 		"log": false
-	}
+	},
+	"tfs": false
 }
