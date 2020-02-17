@@ -119,42 +119,42 @@ ___
 				"input": "src/js/rxcomp/main.js",
 				"output": {
 					"file": "docs/js/rxcomp/main.js",
-					"format": "umd",
-					"globals": {
-						"gsap": "gsap",
-						"rxjs": "rxjs",
-						"rxjs/operators": "rxjs.operators",
-						"rxcomp": "rxcomp",
-						"rxcomp-form": "rxcomp-form"
-					},
-					"external": ["gsap", "rxjs", "rxcomp", "rxcomp-form"]
+					"format": "iife"
 				},
+				"globals": {
+					"gsap": "gsap",
+					"rxjs": "rxjs",
+					"rxjs/operators": "rxjs.operators",
+					"rxcomp": "rxcomp",
+					"rxcomp-form": "rxcomp-form"
+				},
+				"external": ["gsap", "rxjs", "rxjs/operators", "rxcomp", "rxcomp-form"],
 				"minify": true
 			}, {
 				"input": "src/js/typescript/main.ts",
 				"output": {
 					"file": "docs/js/typescript/main.js",
-					"format": "umd",
-					"globals": {
-						"gsap": "gsap",
-						"rxjs": "rxjs",
-						"rxjs/operators": "rxjs.operators"
-					},
-					"external": ["gsap", "rxjs"]
+					"format": "iife"
 				},
+				"globals": {
+					"gsap": "gsap",
+					"rxjs": "rxjs",
+					"rxjs/operators": "rxjs.operators"
+				},
+				"external": ["gsap", "rxjs", "rxjs/operators"],
 				"minify": true
 			}, {
 				"input": "src/js/vanilla/main.js",
 				"output": {
 					"file": "docs/js/vanilla/main.js",
-					"format": "umd",
-					"globals": {
-						"gsap": "gsap",
-						"rxjs": "rxjs",
-						"rxjs/operators": "rxjs.operators"
-					},
-					"external": ["gsap", "rxjs"]
+					"format": "iife"
 				},
+				"globals": {
+					"gsap": "gsap",
+					"rxjs": "rxjs",
+					"rxjs/operators": "rxjs.operators"
+				},
+				"external": ["gsap", "rxjs", "rxjs/operators"],
 				"minify": true
 			}],
 			"bundle": [{
@@ -181,6 +181,39 @@ ___
 				],
 				"output": "docs/fonts/fontawesome/"
 			}]
+		},
+		"dist": {
+			"compile": [{
+				"input": "src/js/typescript/main.ts",
+				"output": [{
+					"file": "dist/amd/main.js",
+					"format": "amd"
+				}, {
+					"file": "dist/cjs/",
+					"format": "cjs"
+				}, {
+					"file": "dist/esm/",
+					"format": "esm"
+				}, {
+					"file": "dist/system/main.js",
+					"format": "system"
+				}, {
+					"file": "dist/iife/main.js",
+					"format": "iife",
+					"minify": true
+				}, {
+					"file": "dist/umd/main.js",
+					"format": "umd",
+					"minify": true
+				}],
+				"globals": {
+					"rxjs": "rxjs",
+					"rxjs/operators": "rxjs.operators"
+				},
+				"name": "main",
+				"external": ["rxjs", "rxjs/operators"]
+			}],
+			"bundle": []
 		}
 	},
 	"tfs": false,
