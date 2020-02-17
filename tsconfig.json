@@ -1,0 +1,11 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"moduleResolution": "node",
+		"typeRoots": ["node_modules/@types"],
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"strict": false
+	}
+}

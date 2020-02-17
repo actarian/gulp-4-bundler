@@ -1,0 +1,1 @@
+{"version":3,"names":[],"mappings":"","sources":["src/js/rxcomp/main.js"],"sourcesContent":["import { Browser } from 'rxcomp';\nimport AppModule from './app.module';\n\nBrowser.bootstrap(AppModule);\n"],"file":"src/js/rxcomp/main.js"}
