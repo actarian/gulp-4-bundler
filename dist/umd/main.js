@@ -10,9 +10,7 @@
 	(global = global || self, global.main = factory());
 }(this, (function () { 'use strict';
 
-	var Main =
-	/*#__PURE__*/
-	function () {
+	var Main = function () {
 	  function Main() {
 	    this.init();
 	  }
@@ -33,3 +31,4 @@
 	return Main;
 
 })));
+//# sourceMappingURL=main.js.map

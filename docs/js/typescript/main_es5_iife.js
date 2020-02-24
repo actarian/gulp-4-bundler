@@ -4,12 +4,10 @@
  * License: MIT
  */
 
-var main = (function () {
+var main_es5_iife = (function () {
 	'use strict';
 
-	var Main =
-	/*#__PURE__*/
-	function () {
+	var Main = function () {
 	  function Main() {
 	    this.init();
 	  }

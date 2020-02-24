@@ -7,9 +7,7 @@
 var main = (function () {
 	'use strict';
 
-	var Main =
-	/*#__PURE__*/
-	function () {
+	var Main = function () {
 	  function Main() {
 	    this.init();
 	  }
@@ -30,3 +28,4 @@ var main = (function () {
 	return Main;
 
 }());
+//# sourceMappingURL=main.js.map

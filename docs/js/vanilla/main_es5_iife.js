@@ -4,12 +4,10 @@
  * License: MIT
  */
 
-var main = (function () {
+var main_es5_iife = (function () {
 	'use strict';
 
-	var Main =
-	/*#__PURE__*/
-	function () {
+	var Main = function () {
 	  function Main() {
 	    this.init();
 	  }
@@ -21,9 +19,7 @@ var main = (function () {
 	    body.classList.add('ready');
 	    var mainContainerNode = document.querySelector('main .container');
 	    var messageNode = document.createElement('div');
-	    messageNode.innerHTML =
-	    /* html */
-	    "<p>\n\t\t\tI'm an ES6 module! <a class=\"btn--link\" href=\"https://developer.mozilla.org/it/docs/Web/JavaScript/ECMAScript_6_support_in_Mozilla\" target=\"_blank\">ES6</a>\n\t\t</p>";
+	    messageNode.innerHTML = "<p>\n\t\t\tI'm an ES6 module! <a class=\"btn--link\" href=\"https://developer.mozilla.org/it/docs/Web/JavaScript/ECMAScript_6_support_in_Mozilla\" target=\"_blank\">ES6</a>\n\t\t</p>";
 	    mainContainerNode.appendChild(messageNode);
 	  };
 
@@ -34,4 +30,3 @@ var main = (function () {
 	return Main;
 
 }());
-//# sourceMappingURL=main.js.map

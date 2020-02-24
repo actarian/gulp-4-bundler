@@ -13,9 +13,7 @@
     subClass.__proto__ = superClass;
   }
 
-  var AppComponent =
-  /*#__PURE__*/
-  function (_Component) {
+  var AppComponent = function (_Component) {
     _inheritsLoose(AppComponent, _Component);
 
     function AppComponent() {
@@ -31,14 +29,9 @@
       node.classList.remove('hidden');
       var containerNode = node.querySelector('.container');
       var messageNode = document.createElement('div');
-      messageNode.innerHTML =
-      /* html */
-      "<p>\n\t\t\tI'm a rxcomp module! <a class=\"btn--link\" href=\"https://github.com/actarian/rxcomp\" target=\"_blank\">RxComp</a>\n\t\t</p>";
+      messageNode.innerHTML = "<p>\n\t\t\tI'm a rxcomp module! <a class=\"btn--link\" href=\"https://github.com/actarian/rxcomp\" target=\"_blank\">RxComp</a>\n\t\t</p>";
       containerNode.appendChild(messageNode);
-    } // onView() { const context = getContext(this); }
-    // onChanges() {}
-    // onDestroy() {}
-    ;
+    };
 
     return AppComponent;
   }(rxcomp.Component);
@@ -46,9 +39,7 @@
     selector: '[app-component]'
   };
 
-  var AppModule =
-  /*#__PURE__*/
-  function (_Module) {
+  var AppModule = function (_Module) {
     _inheritsLoose(AppModule, _Module);
 
     function AppModule() {
@@ -65,5 +56,4 @@
 
   rxcomp.Browser.bootstrap(AppModule);
 
-}(rxcomp, rxcomp-form));
-//# sourceMappingURL=main.js.map
+}(rxcomp, window['rxcomp-form']));
