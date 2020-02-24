@@ -117,25 +117,19 @@ ___
 				"minify": true
 			}, {
 				"input": "src/js/rxcomp/main.js",
-				"output": {
-					"file": "docs/js/rxcomp/main.js",
-					"format": "iife"
-				},
+				"output": "docs/js/rxcomp/main_es5_iife.js",
 				"globals": {
 					"gsap": "gsap",
 					"rxjs": "rxjs",
 					"rxjs/operators": "rxjs.operators",
 					"rxcomp": "rxcomp",
-					"rxcomp-form": "rxcomp-form"
+					"rxcomp-form": "window['rxcomp-form']"
 				},
 				"external": ["gsap", "rxjs", "rxjs/operators", "rxcomp", "rxcomp-form"],
 				"minify": true
 			}, {
 				"input": "src/js/typescript/main.ts",
-				"output": {
-					"file": "docs/js/typescript/main.js",
-					"format": "iife"
-				},
+				"output": "docs/js/typescript/main_es5_iife.js",
 				"globals": {
 					"gsap": "gsap",
 					"rxjs": "rxjs",
@@ -145,10 +139,7 @@ ___
 				"minify": true
 			}, {
 				"input": "src/js/vanilla/main.js",
-				"output": {
-					"file": "docs/js/vanilla/main.js",
-					"format": "iife"
-				},
+				"output": "docs/js/vanilla/main_es5_iife.js",
 				"globals": {
 					"gsap": "gsap",
 					"rxjs": "rxjs",
@@ -175,7 +166,7 @@ ___
 				"output": "docs/js/vendors.js",
 				"minify": true
 			}],
-			"resource": [{
+			"copy": [{
 				"input": [
 					"node_modules/@fortawesome/fontawesome-free/**/*.*"
 				],
@@ -216,13 +207,13 @@ ___
 			"bundle": []
 		}
 	},
-	"tfs": false,
 	"server": {
 		"root": "./docs",
 		"path": "/gulp-4-bundler/",
 		"host": "localhost",
 		"port": 9999,
 		"log": false
-	}
+	},
+	"tfs": false
 }
 ```
