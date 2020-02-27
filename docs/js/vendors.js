@@ -21941,7 +21941,7 @@
 }(this, (function (exports) { 'use strict';
 
 	/*!
-	 * EasePack 3.1.1
+	 * EasePack 3.2.1
 	 * https://greensock.com
 	 *
 	 * @license Copyright 2008-2020, GreenSock. All rights reserved.
@@ -22137,7 +22137,7 @@
 
 	for (var p in EasePack) {
 	  EasePack[p].register = _initCore;
-	  EasePack[p].version = "3.1.1";
+	  EasePack[p].version = "3.2.1";
 	}
 
 	_getGSAP() && gsap.registerPlugin(SlowMo);
@@ -22173,7 +22173,7 @@
   }
 
   /*!
-   * GSAP 3.1.1
+   * GSAP 3.2.1
    * https://greensock.com
    *
    * @license Copyright 2008-2020, GreenSock. All rights reserved.
@@ -22228,11 +22228,12 @@
   },
       _isArray = Array.isArray,
       _strictNumExp = /(?:-?\.?\d|\.)+/gi,
-      _numExp = /[-+=\.]*\d+[\.e\-\+]*\d*[e\-\+]*\d*/g,
-      _complexStringNumExp = /[-+=\.]*\d+(?:\.|e-|e)*\d*/gi,
+      _numExp = /[-+=.]*\d+[.e\-+]*\d*[e\-\+]*\d*/g,
+      _numWithUnitExp = /[-+=.]*\d+[.e-]*\d*[a-z%]*/g,
+      _complexStringNumExp = /[-+=.]*\d+(?:\.|e-|e)*\d*/gi,
       _parenthesesExp = /\(([^()]+)\)/i,
-      _relExp = /[\+-]=-?[\.\d]+/,
-      _delimitedValueExp = /[#\-+\.]*\b[a-z\d-=+%.]+/gi,
+      _relExp = /[+-]=-?[\.\d]+/,
+      _delimitedValueExp = /[#\-+.]*\b[a-z\d-=+%.]+/gi,
       _globalTimeline,
       _win,
       _coreInitted,
@@ -22263,7 +22264,7 @@
       _effects = {},
       _nextGCFrame = 30,
       _harnessPlugins = [],
-      _callbackNames = "onComplete,onUpdate,onStart,onRepeat,onReverseComplete,onInterrupt",
+      _callbackNames = "",
       _harness = function _harness(targets) {
     var target = targets[0],
         harnessPlugin,
@@ -22300,7 +22301,7 @@
     return (names = names.split(",")).forEach(func) || names;
   },
       _round = function _round(value) {
-    return Math.round(value * 10000) / 10000;
+    return Math.round(value * 100000) / 100000 || 0;
   },
       _arrayContainsAny = function _arrayContainsAny(toSearch, toFind) {
     var l = toFind.length,
@@ -22544,10 +22545,13 @@
       _parentToChildTotalTime = function _parentToChildTotalTime(parentTime, child) {
     return (parentTime - child._start) * child._ts + (child._ts >= 0 ? 0 : child._dirty ? child.totalDuration() : child._tDur);
   },
+      _setEnd = function _setEnd(animation) {
+    return animation._end = _round(animation._start + (animation._tDur / Math.abs(animation._ts || animation._pauseTS || _tinyNum) || 0));
+  },
       _addToTimeline = function _addToTimeline(timeline, child, position) {
     child.parent && _removeFromParent(child);
-    child._start = position + child._delay;
-    child._end = child._start + (child.totalDuration() / Math.abs(child.timeScale()) || 0);
+    child._start = _round(position + child._delay);
+    child._end = _round(child._start + (child.totalDuration() / Math.abs(child.timeScale()) || 0));
 
     _addLinkedListItem(timeline, child, "_first", "_last", timeline._sort ? "_start" : 0);
 
@@ -22561,15 +22565,17 @@
       }
     }
 
-    _uncache(timeline);
+    if (_uncache(timeline)._dp && timeline._initted && timeline._time >= timeline._dur && timeline._ts) {
+      if (timeline._dur < timeline.duration()) {
+        var tl = timeline;
 
-    if (timeline._dp && timeline._time >= timeline._dur && timeline._ts && timeline._dur < timeline.duration()) {
-      var tl = timeline;
-
-      while (tl._dp) {
-        tl.totalTime(tl._tTime, true);
-        tl = tl._dp;
+        while (tl._dp) {
+          tl.rawTime() >= 0 && tl.totalTime(tl._tTime);
+          tl = tl._dp;
+        }
       }
+
+      timeline._zTime = -_tinyNum;
     }
 
     return timeline;
@@ -22685,23 +22691,24 @@
       }
     }
   },
-      _onUpdateTotalDuration = function _onUpdateTotalDuration(animation) {
-    if (animation instanceof Timeline) {
-      return _uncache(animation);
-    }
+      _setDuration = function _setDuration(animation, duration, skipUncache) {
+    var repeat = animation._repeat,
+        dur = _round(duration);
 
-    var repeat = animation._repeat;
-    animation._tDur = !repeat ? animation._dur : repeat < 0 ? 1e12 : _round(animation._dur * (repeat + 1) + animation._rDelay * repeat);
-
-    _uncache(animation.parent);
-
+    animation._dur = dur;
+    animation._tDur = !repeat ? dur : repeat < 0 ? 1e12 : _round(dur * (repeat + 1) + animation._rDelay * repeat);
+    !skipUncache && _uncache(animation.parent);
+    animation.parent && _setEnd(animation);
     return animation;
+  },
+      _onUpdateTotalDuration = function _onUpdateTotalDuration(animation) {
+    return animation instanceof Timeline ? _uncache(animation) : _setDuration(animation, animation._dur);
   },
       _zeroPosition = {
     _start: 0,
     endTime: _emptyFunc
   },
-      _parsePosition = function _parsePosition(animation, position, useBuildFrom) {
+      _parsePosition = function _parsePosition(animation, position) {
     var labels = animation.labels,
         recent = animation._recent || _zeroPosition,
         clippedDuration = animation.duration() >= _bigNum ? recent.endTime(false) : animation._dur,
@@ -23066,11 +23073,7 @@
 
     params = v[type + "Params"];
     scope = v.callbackScope || animation;
-
-    if (executeLazyFirst && _lazyTweens.length) {
-      _lazyRender();
-    }
-
+    executeLazyFirst && _lazyTweens.length && _lazyRender();
     return params ? callback.apply(scope, params) : callback.call(scope);
   },
       _interrupt = function _interrupt(animation) {
@@ -23161,7 +23164,7 @@
     h = h < 0 ? h + 1 : h > 1 ? h - 1 : h;
     return (h * 6 < 1 ? m1 + (m2 - m1) * h * 6 : h < .5 ? m2 : h * 3 < 2 ? m1 + (m2 - m1) * (2 / 3 - h) * 6 : m1) * _255 + .5 | 0;
   },
-      splitColor = function splitColor(v, toHSL) {
+      splitColor = function splitColor(v, toHSL, forceAlpha) {
     var a = !v ? _colorLookup.black : _isNumber(v) ? [v >> 16, v >> 8 & _255, v & _255] : 0,
         r,
         g,
@@ -23209,7 +23212,9 @@
           a[1] = _hue(h, r, g);
           a[2] = _hue(h - 1 / 3, r, g);
         } else if (~v.indexOf("=")) {
-          return v.match(_numExp);
+          a = v.match(_numExp);
+          forceAlpha && a.length < 4 && (a[3] = 1);
+          return a;
         }
       } else {
         a = v.match(_strictNumExp) || _colorLookup.transparent;
@@ -23235,39 +23240,68 @@
         h *= 60;
       }
 
-      a[0] = h + .5 | 0;
-      a[1] = s * 100 + .5 | 0;
-      a[2] = l * 100 + .5 | 0;
+      a[0] = ~~(h + .5);
+      a[1] = ~~(s * 100 + .5);
+      a[2] = ~~(l * 100 + .5);
     }
 
+    forceAlpha && a.length < 4 && (a[3] = 1);
     return a;
   },
-      _formatColors = function _formatColors(s, toHSL) {
-    var colors = (s + "").match(_colorExp),
-        charIndex = 0,
-        parsed = "",
-        i,
-        color,
-        temp;
+      _colorOrderData = function _colorOrderData(v) {
+    var values = [],
+        c = [],
+        i = -1;
+    v.split(_colorExp).forEach(function (v) {
+      var a = v.match(_numWithUnitExp) || [];
+      values.push.apply(values, a);
+      c.push(i += a.length + 1);
+    });
+    values.c = c;
+    return values;
+  },
+      _formatColors = function _formatColors(s, toHSL, orderMatchData) {
+    var result = "",
+        colors = (s + result).match(_colorExp),
+        type = toHSL ? "hsla(" : "rgba(",
+        i = 0,
+        c,
+        shell,
+        d,
+        l;
 
     if (!colors) {
       return s;
     }
 
-    for (i = 0; i < colors.length; i++) {
-      color = colors[i];
-      temp = s.substr(charIndex, s.indexOf(color, charIndex) - charIndex);
-      charIndex += temp.length + color.length;
-      color = splitColor(color, toHSL);
+    colors = colors.map(function (color) {
+      return (color = splitColor(color, toHSL, 1)) && type + (toHSL ? color[0] + "," + color[1] + "%," + color[2] + "%," + color[3] : color.join(",")) + ")";
+    });
 
-      if (color.length === 3) {
-        color.push(1);
+    if (orderMatchData) {
+      d = _colorOrderData(s);
+      c = orderMatchData.c;
+
+      if (c.join(result) !== d.c.join(result)) {
+        shell = s.replace(_colorExp, "1").split(_numWithUnitExp);
+        l = shell.length - 1;
+
+        for (; i < l; i++) {
+          result += shell[i] + (~c.indexOf(i) ? colors.shift() || type + "0,0,0,0)" : (d.length ? d : colors.length ? colors : orderMatchData).shift());
+        }
       }
-
-      parsed += temp + (toHSL ? "hsla(" + color[0] + "," + color[1] + "%," + color[2] + "%," + color[3] : "rgba(" + color.join(",")) + ")";
     }
 
-    return parsed + s.substr(charIndex);
+    if (!shell) {
+      shell = s.split(_colorExp);
+      l = shell.length - 1;
+
+      for (; i < l; i++) {
+        result += shell[i] + colors[i];
+      }
+    }
+
+    return result + shell[l];
   },
       _colorExp = function () {
     var s = "(?:\\b(?:(?:rgb|rgba|hsl|hsla)\\(.+?\\))|\\B#(?:[0-9a-f]{3}){1,2}\\b",
@@ -23287,8 +23321,9 @@
 
     if (_colorExp.test(combined)) {
       toHSL = _hslExp.test(combined);
-      a[0] = _formatColors(a[0], toHSL);
       a[1] = _formatColors(a[1], toHSL);
+      a[0] = _formatColors(a[0], toHSL, _colorOrderData(a[1]));
+      return true;
     }
   },
       _tickerActive,
@@ -23298,7 +23333,7 @@
         _adjustedLag = 33,
         _startTime = _getTime(),
         _lastUpdate = _startTime,
-        _gap = 1 / 60,
+        _gap = 1 / 240,
         _nextTime = _gap,
         _listeners = [],
         _id,
@@ -23376,7 +23411,7 @@
         _adjustedLag = Math.min(adjustedLag, _lagThreshold, 0);
       },
       fps: function fps(_fps) {
-        _gap = 1 / (_fps || 60);
+        _gap = 1 / (_fps || 240);
         _nextTime = _self.time + _gap;
       },
       add: function add(callback) {
@@ -23492,7 +23527,7 @@
     }
 
     var easeOut = function easeOut(p) {
-      return --p * p * ((overshoot + 1) * p + overshoot) + 1;
+      return p ? --p * p * ((overshoot + 1) * p + overshoot) + 1 : 0;
     },
         ease = type === "out" ? easeOut : type === "in" ? function (p) {
       return 1 - easeOut(1 - p);
@@ -23566,6 +23601,11 @@
     }
   };
   _defaults.ease = _easeMap["quad.out"];
+
+  _forEachName("onComplete,onUpdate,onStart,onRepeat,onReverseComplete,onInterrupt", function (name) {
+    return _callbackNames += name + "," + name + "Params,";
+  });
+
   var GSCache = function GSCache(target, harness) {
     this.id = _gsID++;
     target._gsap = this;
@@ -23578,34 +23618,22 @@
     function Animation(vars, time) {
       var parent = vars.parent || _globalTimeline;
       this.vars = vars;
-      this._dur = this._tDur = +vars.duration || 0;
       this._delay = +vars.delay || 0;
 
       if (this._repeat = vars.repeat || 0) {
         this._rDelay = vars.repeatDelay || 0;
         this._yoyo = !!vars.yoyo || !!vars.yoyoEase;
-
-        _onUpdateTotalDuration(this);
       }
 
       this._ts = 1;
+
+      _setDuration(this, +vars.duration, 1);
+
       this.data = vars.data;
-
-      if (!_tickerActive) {
-        _ticker.wake();
-      }
-
-      if (parent) {
-        _addToTimeline(parent, this, time || time === 0 ? time : parent._time);
-      }
-
-      if (vars.reversed) {
-        this.reversed(true);
-      }
-
-      if (vars.paused) {
-        this.paused(true);
-      }
+      _tickerActive || _ticker.wake();
+      parent && _addToTimeline(parent, this, time || time === 0 ? time : parent._time);
+      vars.reversed && this.reversed(true);
+      vars.paused && this.paused(true);
     }
 
     var _proto = Animation.prototype;
@@ -23620,10 +23648,7 @@
     };
 
     _proto.duration = function duration(value) {
-      var isSetter = arguments.length,
-          repeat = this._repeat,
-          repeatCycles = repeat > 0 ? repeat * ((isSetter ? value : this._dur) + this._rDelay) : 0;
-      return isSetter ? this.totalDuration(repeat < 0 ? value : value + repeatCycles) : this.totalDuration() && this._dur;
+      return arguments.length ? _setDuration(this, value) : this.totalDuration() && this._dur;
     };
 
     _proto.totalDuration = function totalDuration(value) {
@@ -23631,15 +23656,8 @@
         return this._tDur;
       }
 
-      var repeat = this._repeat,
-          isInfinite = (value || this._rDelay) && repeat < 0;
-      this._tDur = isInfinite ? 1e12 : value;
-      this._dur = isInfinite ? value : (value - repeat * this._rDelay) / (repeat + 1);
       this._dirty = 0;
-
-      _uncache(this.parent);
-
-      return this;
+      return _setDuration(this, this._repeat < 0 ? value : (value - this._repeat * this._rDelay) / (this._repeat + 1));
     };
 
     _proto.totalTime = function totalTime(_totalTime, suppressEvents) {
@@ -23649,32 +23667,31 @@
         return this._tTime;
       }
 
-      var parent = this.parent || this._dp,
-          start;
+      var parent = this.parent || this._dp;
 
       if (parent && parent.smoothChildTiming && this._ts) {
-        start = this._start;
-        this._start = parent._time - (this._ts > 0 ? _totalTime / this._ts : ((this._dirty ? this.totalDuration() : this._tDur) - _totalTime) / -this._ts);
-        this._end += this._start - start;
+        this._start = _round(parent._time - (this._ts > 0 ? _totalTime / this._ts : ((this._dirty ? this.totalDuration() : this._tDur) - _totalTime) / -this._ts));
+
+        _setEnd(this);
 
         if (!parent._dirty) {
           _uncache(parent);
         }
 
         while (parent.parent) {
-          if (parent.parent._time !== parent._start + (parent._ts > 0 ? parent._tTime / parent._ts : (parent.totalDuration() - parent._tTime) / -parent._ts)) {
+          if (parent.parent._time !== parent._start + (parent._ts >= 0 ? parent._tTime / parent._ts : (parent.totalDuration() - parent._tTime) / -parent._ts)) {
             parent.totalTime(parent._tTime, true);
           }
 
           parent = parent.parent;
         }
 
-        if (!this.parent && parent.autoRemoveChildren) {
-          _addToTimeline(parent, this, this._start - this._delay);
+        if (!this.parent && this._dp.autoRemoveChildren) {
+          _addToTimeline(this._dp, this, this._start - this._delay);
         }
       }
 
-      if (this._tTime !== _totalTime || !this._dur && !suppressEvents) {
+      if (this._tTime !== _totalTime || !this._dur && !suppressEvents || Math.abs(this._zTime) === _tinyNum) {
         this._ts || (this._pTime = _totalTime);
 
         _lazySafeRender(this, _totalTime, suppressEvents);
@@ -23688,11 +23705,11 @@
     };
 
     _proto.totalProgress = function totalProgress(value, suppressEvents) {
-      return arguments.length ? this.totalTime(this.totalDuration() * value, suppressEvents) : this._tTime / this.totalDuration();
+      return arguments.length ? this.totalTime(this.totalDuration() * value, suppressEvents) : this.totalDuration() ? Math.min(1, this._tTime / this._tDur) : this.ratio;
     };
 
     _proto.progress = function progress(value, suppressEvents) {
-      return arguments.length ? this.totalTime(this.duration() * (this._yoyo && !(this.iteration() & 1) ? 1 - value : value) + _elapsedCycleDuration(this), suppressEvents) : this.duration() ? this._time / this._dur : this.ratio;
+      return arguments.length ? this.totalTime(this.duration() * (this._yoyo && !(this.iteration() & 1) ? 1 - value : value) + _elapsedCycleDuration(this), suppressEvents) : this.duration() ? Math.min(1, this._time / this._dur) : this.ratio;
     };
 
     _proto.iteration = function iteration(value, suppressEvents) {
@@ -23729,15 +23746,11 @@
           this._pTime = this._tTime || Math.max(-this._delay, this.rawTime());
           this._ts = this._act = 0;
         } else {
+          _wake();
+
           this._ts = this._pauseTS || 1;
           this._pauseTS = null;
-          value = this._tTime || this._pTime;
-
-          if (this.progress() === 1) {
-            this._tTime -= _tinyNum;
-          }
-
-          this.totalTime(value, true);
+          this.totalTime(this.parent && !this.parent.smoothChildTiming ? this.rawTime() : this._tTime || this._pTime, this.progress() === 1 && (this._tTime -= _tinyNum) && Math.abs(this._zTime) !== _tinyNum);
         }
       }
 
@@ -23845,6 +23858,7 @@
 
     _proto.invalidate = function invalidate() {
       this._initted = 0;
+      this._zTime = -_tinyNum;
       return this;
     };
 
@@ -23886,16 +23900,7 @@
             _resolve = function _resolve() {
           var _then = self.then;
           self.then = null;
-          f = f(self);
-
-          if (f) {
-            if (f.then || f === self) {
-              self.then = _then;
-            } else if (!_isFunction(f)) {
-              f = _passThrough;
-            }
-          }
-
+          _isFunction(f) && (f = f(self)) && (f.then || f === self) && (self.then = _then);
           resolve(f);
           self.then = _then;
         };
@@ -23924,7 +23929,7 @@
     _dirty: 0,
     _repeat: 0,
     _yoyo: false,
-    parent: 0,
+    parent: null,
     _initted: false,
     _rDelay: 0,
     _ts: 1,
@@ -23947,7 +23952,7 @@
 
       _this = _Animation.call(this, vars, time) || this;
       _this.labels = {};
-      _this.smoothChildTiming = _isNotFalse(vars.smoothChildTiming);
+      _this.smoothChildTiming = !!vars.smoothChildTiming;
       _this.autoRemoveChildren = !!vars.autoRemoveChildren;
       _this._sort = _isNotFalse(vars.sortChildren);
       return _this;
@@ -24013,7 +24018,7 @@
       var prevTime = this._time,
           tDur = this._dirty ? this.totalDuration() : this._tDur,
           dur = this._dur,
-          tTime = totalTime > tDur - _tinyNum && totalTime >= 0 && this !== _globalTimeline ? tDur : totalTime < _tinyNum ? 0 : totalTime,
+          tTime = this !== _globalTimeline && totalTime > tDur - _tinyNum && totalTime >= 0 ? tDur : totalTime < _tinyNum ? 0 : totalTime,
           crossingStart = this._zTime < 0 !== totalTime < 0 && (this._initted || !dur),
           time,
           child,
@@ -24029,6 +24034,16 @@
           isYoyo;
 
       if (tTime !== this._tTime || force || crossingStart) {
+        if (prevTime !== this._time && dur) {
+          tTime += this._time - prevTime;
+          totalTime += this._time - prevTime;
+        }
+
+        time = tTime;
+        prevStart = this._start;
+        timeScale = this._ts;
+        prevPaused = !timeScale;
+
         if (crossingStart) {
           if (!dur) {
             prevTime = this._zTime;
@@ -24037,15 +24052,6 @@
           if (totalTime || !suppressEvents) {
             this._zTime = totalTime;
           }
-        }
-
-        time = tTime;
-        prevStart = this._start;
-        timeScale = this._ts;
-        prevPaused = timeScale === 0;
-
-        if (prevTime !== this._time && dur) {
-          time += this._time - prevTime;
         }
 
         if (this._repeat) {
@@ -24087,9 +24093,7 @@
               _callback(this, "onRepeat");
             }
 
-            this.vars.repeatRefresh && !isYoyo && this.getChildren().forEach(function (child) {
-              return child.invalidate();
-            });
+            this.vars.repeatRefresh && !isYoyo && (this.invalidate()._lock = 1);
 
             if (prevTime !== this._time || prevPaused !== !this._ts) {
               return this;
@@ -24099,6 +24103,7 @@
               this._lock = 2;
               prevTime = rewinding ? dur + 0.0001 : -0.0001;
               this.render(prevTime, true);
+              this.vars.repeatRefresh && !isYoyo && this.invalidate();
             }
 
             this._lock = 0;
@@ -24124,6 +24129,7 @@
         if (!this._initted) {
           this._onUpdate = this.vars.onUpdate;
           this._initted = 1;
+          this._zTime = totalTime;
         }
 
         if (!prevTime && time && !suppressEvents) {
@@ -24145,6 +24151,7 @@
 
               if (time !== this._time || !this._ts && !prevPaused) {
                 pauseTween = 0;
+                next && (tTime += this._zTime = -_tinyNum);
                 break;
               }
             }
@@ -24167,6 +24174,7 @@
 
               if (time !== this._time || !this._ts && !prevPaused) {
                 pauseTween = 0;
+                next && (tTime += this._zTime = adjustedTime ? -_tinyNum : _tinyNum);
                 break;
               }
             }
@@ -24181,6 +24189,9 @@
 
           if (this._ts) {
             this._start = prevStart;
+
+            _setEnd(this);
+
             return this.render(totalTime, suppressEvents, force);
           }
         }
@@ -24312,7 +24323,7 @@
       this._forcing = 1;
 
       if (!this.parent && !this._dp && this._ts) {
-        this._start = _ticker.time - (this._ts > 0 ? _totalTime2 / this._ts : (this.totalDuration() - _totalTime2) / -this._ts);
+        this._start = _round(_ticker.time - (this._ts > 0 ? _totalTime2 / this._ts : (this.totalDuration() - _totalTime2) / -this._ts));
       }
 
       _Animation.prototype.totalTime.call(this, _totalTime2, suppressEvents);
@@ -24384,28 +24395,32 @@
     };
 
     _proto2.tweenTo = function tweenTo(position, vars) {
+      vars = vars || {};
+
       var tl = this,
           endTime = _parsePosition(tl, position),
-          startAt = vars && vars.startAt,
-          tween = Tween.to(tl, _setDefaults({
+          _vars = vars,
+          startAt = _vars.startAt,
+          _onStart = _vars.onStart,
+          onStartParams = _vars.onStartParams,
+          tween = Tween.to(tl, _setDefaults(vars, {
         ease: "none",
         lazy: false,
         time: endTime,
-        duration: Math.abs(endTime - (startAt && "time" in startAt ? startAt.time : tl._time)) / tl.timeScale() || _tinyNum,
+        duration: vars.duration || Math.abs(endTime - (startAt && "time" in startAt ? startAt.time : tl._time)) / tl.timeScale() || _tinyNum,
         onStart: function onStart() {
           tl.pause();
-          var duration = Math.abs(endTime - tl._time) / tl.timeScale();
+          var duration = vars.duration || Math.abs(endTime - tl._time) / tl.timeScale();
 
           if (tween._dur !== duration) {
-            tween._dur = duration;
-            tween.render(tween._time, true, true);
+            _setDuration(tween, duration).render(tween._time, true, true);
           }
 
-          if (vars && vars.onStart) {
-            vars.onStart.apply(tween, vars.onStartParams || []);
+          if (_onStart) {
+            _onStart.apply(tween, onStartParams || []);
           }
         }
-      }, vars));
+      }));
 
       return tween;
     };
@@ -24510,63 +24525,62 @@
           self = this,
           child = self._last,
           prevStart = _bigNum,
-          repeat = self._repeat,
-          repeatCycles = repeat * self._rDelay || 0,
-          isInfinite = repeat < 0,
           prev,
-          end;
+          end,
+          start,
+          parent;
 
-      if (!arguments.length) {
-        if (self._dirty) {
-          while (child) {
-            prev = child._prev;
-
-            if (child._dirty) {
-              child.totalDuration();
-            }
-
-            if (child._start > prevStart && self._sort && child._ts && !self._lock) {
-              self._lock = 1;
-
-              _addToTimeline(self, child, child._start - child._delay);
-
-              self._lock = 0;
-            } else {
-              prevStart = child._start;
-            }
-
-            if (child._start < 0 && child._ts) {
-              max -= child._start;
-
-              if (!self.parent && !self._dp || self.parent && self.parent.smoothChildTiming) {
-                self._start += child._start / self._ts;
-                self._time -= child._start;
-                self._tTime -= child._start;
-              }
-
-              self.shiftChildren(-child._start, false, -1e20);
-              prevStart = 0;
-            }
-
-            end = child._end = child._start + child._tDur / Math.abs(child._ts || child._pauseTS || _tinyNum);
-
-            if (end > max && child._ts) {
-              max = _round(end);
-            }
-
-            child = prev;
-          }
-
-          self._dur = self === _globalTimeline && self._time > max ? self._time : Math.min(_bigNum, max);
-          self._tDur = isInfinite && (self._dur || repeatCycles) ? 1e12 : Math.min(_bigNum, max * (repeat + 1) + repeatCycles);
-          self._end = self._start + (self._tDur / Math.abs(self._ts || self._pauseTS || _tinyNum) || 0);
-          self._dirty = 0;
-        }
-
-        return self._tDur;
+      if (arguments.length) {
+        return self._repeat < 0 ? self : self.timeScale(self.totalDuration() / value);
       }
 
-      return isInfinite ? self : self.timeScale(self.totalDuration() / value);
+      if (self._dirty) {
+        parent = self.parent;
+
+        while (child) {
+          prev = child._prev;
+
+          if (child._dirty) {
+            child.totalDuration();
+          }
+
+          start = child._start;
+
+          if (start > prevStart && self._sort && child._ts && !self._lock) {
+            self._lock = 1;
+            _addToTimeline(self, child, start - child._delay)._lock = 0;
+          } else {
+            prevStart = start;
+          }
+
+          if (start < 0 && child._ts) {
+            max -= start;
+
+            if (!parent && !self._dp || parent && parent.smoothChildTiming) {
+              self._start += start / self._ts;
+              self._time -= start;
+              self._tTime -= start;
+            }
+
+            self.shiftChildren(-start, false, -1e20);
+            prevStart = 0;
+          }
+
+          end = _setEnd(child);
+
+          if (end > max && child._ts) {
+            max = end;
+          }
+
+          child = prev;
+        }
+
+        _setDuration(self, self === _globalTimeline && self._time > max ? self._time : Math.min(_bigNum, max), 1);
+
+        self._dirty = 0;
+      }
+
+      return self._tDur;
     };
 
     Timeline.updateRoot = function updateRoot(time) {
@@ -24938,7 +24952,7 @@
       _parseFuncOrString = function _parseFuncOrString(value, tween, i, target, targets) {
     return _isFunction(value) ? value.call(tween, i, target, targets) : _isString(value) && ~value.indexOf("random(") ? _replaceRandom(value) : value;
   },
-      _staggerTweenProps = _callbackNames + ",repeat,repeatDelay,yoyo,repeatRefresh,yoyoEase",
+      _staggerTweenProps = _callbackNames + "repeat,repeatDelay,yoyo,repeatRefresh,yoyoEase",
       _staggerPropsToSkip = (_staggerTweenProps + ",id,stagger,delay,duration,paused").split(",");
 
   var Tween = function (_Animation2) {
@@ -24962,7 +24976,7 @@
           overwrite = _this3$vars.overwrite,
           keyframes = _this3$vars.keyframes,
           defaults = _this3$vars.defaults,
-          parsedTargets = _isArray(targets) && _isNumber(targets[0]) ? [targets] : toArray(targets),
+          parsedTargets = (_isArray(targets) ? _isNumber(targets[0]) : "length" in vars) ? [targets] : toArray(targets),
           tl,
           i,
           copy,
@@ -25092,7 +25106,7 @@
           cycleDuration = dur + this._rDelay;
           time = _round(tTime % cycleDuration);
 
-          if (time > dur) {
+          if (time > dur || tDur === tTime) {
             time = dur;
           }
 
@@ -25499,9 +25513,8 @@
     return PropTween;
   }();
 
-  _forEachName(_callbackNames + ",parent,duration,ease,delay,overwrite,runBackwards,startAt,yoyo,immediateRender,repeat,repeatDelay,data,paused,reversed,lazy,callbackScope,stringFilter,id,yoyoEase,stagger,inherit,repeatRefresh,keyframes,autoRevert", function (name) {
-    _reservedProps[name] = 1;
-    if (name.substr(0, 2) === "on") _reservedProps[name + "Params"] = 1;
+  _forEachName(_callbackNames + "parent,duration,ease,delay,overwrite,runBackwards,startAt,yoyo,immediateRender,repeat,repeatDelay,data,paused,reversed,lazy,callbackScope,stringFilter,id,yoyoEase,stagger,inherit,repeatRefresh,keyframes,autoRevert", function (name) {
+    return _reservedProps[name] = 1;
   });
 
   _globals.TweenMax = _globals.TweenLite = Tween;
@@ -25510,7 +25523,8 @@
     sortChildren: false,
     defaults: _defaults,
     autoRemoveChildren: true,
-    id: "root"
+    id: "root",
+    smoothChildTiming: true
   });
   _config.stringFilter = _colorStringFilter;
   var _gsap = {
@@ -25679,7 +25693,8 @@
       Tween: Tween,
       Timeline: Timeline,
       Animation: Animation,
-      getCache: _getCache
+      getCache: _getCache,
+      _removeLinkedListItem: _removeLinkedListItem
     }
   };
 
@@ -25777,7 +25792,7 @@
       }
     }
   }, _buildModifierPlugin("roundProps", _roundModifier), _buildModifierPlugin("modifiers"), _buildModifierPlugin("snap", snap)) || _gsap;
-  Tween.version = Timeline.version = gsap.version = "3.1.1";
+  Tween.version = Timeline.version = gsap.version = "3.2.1";
   _coreReady = 1;
 
   if (_windowExists()) {
@@ -25819,7 +25834,6 @@
       _atan2 = Math.atan2,
       _bigNum$1 = 1e8,
       _capsExp = /([A-Z])/g,
-      _numWithUnitExp = /[-+=\.]*\d+[\.e-]*\d*[a-z%]*/g,
       _horizontalExp = /(?:left|right|width|margin|padding|x)/i,
       _complexExp = /[\s,\(]\S/,
       _propertyAliases = {
@@ -25828,13 +25842,13 @@
     alpha: "opacity"
   },
       _renderCSSProp = function _renderCSSProp(ratio, data) {
-    return data.set(data.t, data.p, ~~((data.s + data.c * ratio) * 1000) / 1000 + data.u, data);
+    return data.set(data.t, data.p, Math.round((data.s + data.c * ratio) * 10000) / 10000 + data.u, data);
   },
       _renderPropWithEnd = function _renderPropWithEnd(ratio, data) {
-    return data.set(data.t, data.p, ratio === 1 ? data.e : ~~((data.s + data.c * ratio) * 1000) / 1000 + data.u, data);
+    return data.set(data.t, data.p, ratio === 1 ? data.e : Math.round((data.s + data.c * ratio) * 10000) / 10000 + data.u, data);
   },
       _renderCSSPropWithBeginning = function _renderCSSPropWithBeginning(ratio, data) {
-    return data.set(data.t, data.p, ratio ? ~~((data.s + data.c * ratio) * 1000) / 1000 + data.u : data.b, data);
+    return data.set(data.t, data.p, ratio ? Math.round((data.s + data.c * ratio) * 10000) / 10000 + data.u : data.b, data);
   },
       _renderRoundedCSSProp = function _renderRoundedCSSProp(ratio, data) {
     var value = data.s + data.c * ratio;
@@ -25880,12 +25894,12 @@
     return cs[property] || cs.getPropertyValue(property.replace(_capsExp, "-$1").toLowerCase()) || cs.getPropertyValue(property) || !skipPrefixFallback && _getComputedProperty(target, _checkPropPrefix(property) || property, 1) || "";
   },
       _prefixes = "O,Moz,ms,Ms,Webkit".split(","),
-      _checkPropPrefix = function _checkPropPrefix(property, element) {
+      _checkPropPrefix = function _checkPropPrefix(property, element, preferPrefix) {
     var e = element || _tempDiv,
         s = e.style,
         i = 5;
 
-    if (property in s) {
+    if (property in s && !preferPrefix) {
       return property;
     }
 
@@ -25933,10 +25947,12 @@
       bbox = this._gsapBBox();
     }
 
-    if (oldSibling) {
-      oldParent.insertBefore(this, oldSibling);
-    } else {
-      oldParent.appendChild(this);
+    if (oldParent) {
+      if (oldSibling) {
+        oldParent.insertBefore(this, oldSibling);
+      } else {
+        oldParent.appendChild(this);
+      }
     }
 
     _docElement.removeChild(svg);
@@ -25962,6 +25978,7 @@
       bounds = _getBBoxHack.call(target, true);
     }
 
+    bounds && bounds.width || (bounds = _getBBoxHack.call(target, true));
     return bounds && !bounds.width && !bounds.x && !bounds.y ? {
       x: +_getAttributeFallbacks(target, ["x", "cx", "x1"]) || 0,
       y: +_getAttributeFallbacks(target, ["y", "cy", "y1"]) || 0,
@@ -26078,7 +26095,7 @@
 
     if (_transformProps[property] && property !== "transform") {
       value = _parseTransform(target, uncache);
-      value = property !== "transformOrigin" ? value[property] : _firstTwoOnly(_getComputedProperty(target, _transformOriginProp)) + value.zOrigin + "px";
+      value = property !== "transformOrigin" ? value[property] : _firstTwoOnly(_getComputedProperty(target, _transformOriginProp)) + " " + value.zOrigin + "px";
     } else {
       value = target.style[property];
 
@@ -26090,6 +26107,16 @@
     return unit && !~(value + "").indexOf(" ") ? _convertToUnit(target, property, value, unit) + unit : value;
   },
       _tweenComplexCSSString = function _tweenComplexCSSString(target, prop, start, end) {
+    if (!start || start === "none") {
+      var p = _checkPropPrefix(prop, target, 1),
+          s = p && _getComputedProperty(target, p, 1);
+
+      if (s && s !== start) {
+        prop = p;
+        start = s;
+      }
+    }
+
     var pt = new PropTween(this._pt, target.style, prop, 0, 1, _renderComplexString),
         index = 0,
         matchIndex = 0,
@@ -26123,17 +26150,6 @@
 
     start = a[0];
     end = a[1];
-    startValue = start.indexOf("rgba(");
-    endValue = end.indexOf("rgba(");
-
-    if (!!startValue !== !!endValue) {
-      if (startValue) {
-        start = start.substr(startValue) + " " + start.substr(0, startValue - 1);
-      } else {
-        end = end.substr(endValue) + " " + end.substr(0, endValue - 1);
-      }
-    }
-
     startValues = start.match(_numWithUnitExp) || [];
     endValues = end.match(_numWithUnitExp) || [];
 
@@ -26286,7 +26302,7 @@
     return _isNullTransform(matrixString) ? _identity2DMatrix : matrixString.substr(7).match(_numExp).map(_round);
   },
       _getMatrix = function _getMatrix(target, force2D) {
-    var cache = target._gsap,
+    var cache = target._gsap || _getCache(target),
         style = target.style,
         matrix = _getComputedTransformMatrixAsArray(target),
         parent,
@@ -26388,6 +26404,8 @@
 
       _addNonTweeningPT(pluginToAddPropTweensTo, cache, "yOffset", yOffsetOld, cache.yOffset);
     }
+
+    target.setAttribute("data-svg-origin", xOrigin + " " + yOrigin);
   },
       _parseTransform = function _parseTransform(target, uncache) {
     var cache = target._gsap || new GSCache(target);
@@ -26398,8 +26416,6 @@
 
     var style = target.style,
         invertedScaleX = cache.scaleX < 0,
-        xOrigin = cache.xOrigin || 0,
-        yOrigin = cache.yOrigin || 0,
         px = "px",
         deg = "deg",
         origin = _getComputedProperty(target, _transformOriginProp) || "0",
@@ -26414,6 +26430,8 @@
         skewX,
         skewY,
         perspective,
+        xOrigin,
+        yOrigin,
         matrix,
         angle,
         cos,
@@ -26439,8 +26457,13 @@
     matrix = _getMatrix(target, cache.svg);
 
     if (cache.svg) {
-      _applySVGOrigin(target, origin, cache.originIsAbsolute, cache.smooth !== false, matrix);
+      t1 = !cache.uncache && target.getAttribute("data-svg-origin");
+
+      _applySVGOrigin(target, t1 || origin, !!t1 || cache.originIsAbsolute, cache.smooth !== false, matrix);
     }
+
+    xOrigin = cache.xOrigin || 0;
+    yOrigin = cache.yOrigin || 0;
 
     if (matrix !== _identity2DMatrix) {
       a = matrix[0];
@@ -26455,6 +26478,7 @@
         scaleY = Math.sqrt(d * d + c * c);
         rotation = a || b ? _atan2(b, a) * _RAD2DEG : 0;
         skewX = c || d ? _atan2(c, d) * _RAD2DEG + rotation : 0;
+        skewX && (scaleY *= Math.cos(skewX * _DEG2RAD));
 
         if (cache.svg) {
           x -= xOrigin - (xOrigin * a + yOrigin * c);
@@ -26955,7 +26979,7 @@
               if (cache.svg) {
                 _applySVGOrigin(target, endValue, 0, smooth, 0, this);
               } else {
-                endUnit = parseFloat(endValue.split(" ")[2]);
+                endUnit = parseFloat(endValue.split(" ")[2]) || 0;
 
                 if (endUnit !== cache.zOrigin) {
                   _addNonTweeningPT(this, cache, "zOrigin", cache.zOrigin, endUnit);
@@ -26991,6 +27015,7 @@
 
           if (isTransformRelated || (endNum || endNum === 0) && (startNum || startNum === 0) && !_complexExp.test(endValue) && p in style) {
             startUnit = (startValue + "").substr((startNum + "").length);
+            endNum || (endNum = 0);
             endUnit = (endValue + "").substr((endNum + "").length) || (p in _config.units ? _config.units[p] : startUnit);
 
             if (startUnit !== endUnit) {
@@ -27027,8 +27052,13 @@
     get: _get,
     aliases: _propertyAliases,
     getSetter: function getSetter(target, property, plugin) {
-      property = _propertyAliases[property] || property;
+      var p = _propertyAliases[property];
+      p && p.indexOf(",") < 0 && (property = p);
       return property in _transformProps && property !== _transformOriginProp && (target._gsap.x || _get(target, "x")) ? plugin && _recentSetterPlugin === plugin ? property === "scale" ? _setterScale : _setterTransform : (_recentSetterPlugin = plugin || {}) && (property === "scale" ? _setterScaleWithRender : _setterTransformWithRender) : target.style && !_isUndefined(target.style[property]) ? _setterCSSStyle : ~property.indexOf("-") ? _setterCSSProp : _getSetter(target, property);
+    },
+    core: {
+      _removeProperty: _removeProperty,
+      _getMatrix: _getMatrix
     }
   };
   gsap.utils.checkPrefix = _checkPropPrefix;
