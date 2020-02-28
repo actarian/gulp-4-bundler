@@ -3,8 +3,8 @@
 	"name": "gulp-4-bundler",
 	"description": "Bbootstrap app of the gulpfile-config bundler utility.",
 	"version": "1.0.0",
-  "main": "dist/cjs/main.js",
-  "types": "dist/cjs/main.d.ts",
+	"main": "dist/cjs/main.js",
+	"types": "dist/cjs/main.d.ts",
 	"license": "MIT",
 	"keywords": [
 		"gulp",
@@ -33,6 +33,6 @@
 		"swiper": "~5.3.1"
 	},
 	"devDependencies": {
-		"gulpfile-config": "~1.0.0-alpha.4"
+		"gulpfile-config": "~1.0.0-alpha.5"
 	}
 }
