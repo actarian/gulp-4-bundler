@@ -86,13 +86,6 @@ As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bund
             "rxcomp": "rxcomp",
             "rxcomp-form": "window['rxcomp-form']"
           },
-          "external": [
-            "gsap",
-            "rxjs",
-            "rxjs/operators",
-            "rxcomp",
-            "rxcomp-form"
-          ],
           "minify": true
         },
         {
@@ -103,11 +96,6 @@ As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bund
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators"
           },
-          "external": [
-            "gsap",
-            "rxjs",
-            "rxjs/operators"
-          ],
           "minify": true
         },
         {
@@ -118,11 +106,6 @@ As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bund
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators"
           },
-          "external": [
-            "gsap",
-            "rxjs",
-            "rxjs/operators"
-          ],
           "minify": true
         }
       ],
@@ -192,11 +175,7 @@ As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bund
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators"
           },
-          "name": "main",
-          "external": [
-            "rxjs",
-            "rxjs/operators"
-          ]
+          "name": "main"
         }
       ],
       "bundle": []
@@ -211,7 +190,6 @@ As in the example [gulpfile-config.json](https://github.com/actarian/gulp-4-bund
   },
   "tfs": false
 }
-
 ```
 ___
 ## Commands
