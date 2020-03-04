@@ -30,9 +30,10 @@
 		"rxcomp": "~1.0.0-beta.5",
 		"rxcomp-form": "~1.0.0-beta.3",
 		"rxjs": "~6.5.4",
-		"swiper": "~5.3.1"
+		"swiper": "~5.3.1",
+		"tslib": "~1.11.1"
 	},
 	"devDependencies": {
-		"gulpfile-config": "~1.0.0-alpha.6"
+		"gulpfile-config": "~1.0.0-alpha.7"
 	}
 }
