@@ -2360,8 +2360,7 @@ button,
   .background canvas {
     position: relative;
     width: 100%;
-    -o-object-fit: cover;
-       object-fit: cover; }
+    object-fit: cover; }
   @media screen {
     .background:after {
       content: '';
