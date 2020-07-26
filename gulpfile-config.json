@@ -27,10 +27,12 @@
           "output": "docs/js/rxcomp/main_es5_iife.js",
           "globals": {
             "gsap": "gsap",
+            "immer": "immer",
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",
             "rxcomp": "rxcomp",
-            "rxcomp-form": "window['rxcomp-form']"
+            "rxcomp-form": "rxcomp.form",
+            "rxcomp-store": "rxcomp.store"
           },
           "minify": true
         },
@@ -65,9 +67,11 @@
         },
         {
           "input": [
+            "node_modules/immer/dist/immer.umd.production.min.js",
             "node_modules/rxjs/bundles/rxjs.umd.js",
-            "node_modules/rxcomp/dist/rxcomp.js",
-            "node_modules/rxcomp-form/dist/rxcomp-form.js",
+            "node_modules/rxcomp/dist/iife/rxcomp.js",
+            "node_modules/rxcomp-form/dist/iife/rxcomp-form.js",
+            "node_modules/rxcomp-store/dist/iife/rxcomp-store.js",
             "node_modules/swiper/js/swiper.js",
             "node_modules/gsap/dist/EasePack.js",
             "node_modules/gsap/dist/gsap.js"
