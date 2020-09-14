@@ -3,8 +3,6 @@
   "name": "gulp-4-bundler",
   "description": "Bootstrap app of the gulpfile-config bundler utility.",
   "version": "1.0.0",
-  "main": "dist/cjs/main.js",
-  "types": "dist/cjs/main.d.ts",
   "license": "MIT",
   "keywords": [
     "gulp",
@@ -15,24 +13,21 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git://github.com/actarian/rxcomp.git"
+    "url": "git://github.com/actarian/gulp-4-bundler.git"
   },
   "bugs": {
-    "url": "https://github.com/actarian/rxcomp/issues"
+    "url": "https://github.com/actarian/gulp-4-bundler/issues"
   },
-  "homepage": "https://github.com/actarian/rxcomp",
+  "homepage": "https://github.com/actarian/gulp-4-bundler",
   "scripts": {
     "start": "gulp",
     "build": "gulp build --target dist"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.14.0",
     "gsap": "3.5.1",
     "rxcomp": "1.0.0-beta.18",
     "rxcomp-form": "1.0.0-beta.18",
-    "rxjs": "6.6.2",
-    "swiper": "6.2.0",
-    "tslib": "2.0.1"
+    "rxjs": "6.6.2"
   },
   "devDependencies": {
     "gulpfile-config": "1.0.0-alpha.14"

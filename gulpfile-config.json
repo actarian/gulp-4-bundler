@@ -4,54 +4,28 @@
       "compile": [
         {
           "input": "src/*.html",
-          "output": "docs/",
+          "output": "dist/",
           "minify": true
         },
         {
           "input": "src/templates/emails/*.mjml",
-          "output": "docs/templates/emails/",
+          "output": "dist/templates/emails/",
           "minify": false
         },
         {
           "input": "src/css/main.scss",
-          "output": "docs/css/main.css",
+          "output": "dist/css/main.css",
           "minify": true
         },
         {
-          "input": "src/css/main-cssvars.scss",
-          "output": "docs/css/main-cssvars.css",
-          "minify": true
-        },
-        {
-          "input": "src/js/rxcomp/main.js",
-          "output": "docs/js/rxcomp/main_es5_iife.js",
+          "input": "src/js/main.js",
+          "output": "dist/js/main.js",
           "globals": {
             "gsap": "gsap",
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",
             "rxcomp": "rxcomp",
-            "rxcomp-form": "rxcomp.form",
-            "rxcomp-store": "rxcomp.store"
-          },
-          "minify": true
-        },
-        {
-          "input": "src/js/typescript/main.ts",
-          "output": "docs/js/typescript/main_es5_iife.js",
-          "globals": {
-            "gsap": "gsap",
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators"
-          },
-          "minify": true
-        },
-        {
-          "input": "src/js/vanilla/main.js",
-          "output": "docs/js/vanilla/main_es5_iife.js",
-          "globals": {
-            "gsap": "gsap",
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators"
+            "rxcomp-form": "rxcomp.form"
           },
           "minify": true
         }
@@ -59,10 +33,9 @@
       "bundle": [
         {
           "input": [
-            "node_modules/swiper/css/swiper.css",
             "node_modules/rxcomp/dist/rxcomp-dark.css"
           ],
-          "output": "docs/css/vendors.css",
+          "output": "dist/css/vendors.css",
           "minify": true
         },
         {
@@ -71,64 +44,17 @@
             "node_modules/gsap/dist/gsap.js",
             "node_modules/rxjs/bundles/rxjs.umd.js",
             "node_modules/rxcomp/dist/umd/rxcomp.js",
-            "node_modules/rxcomp-form/dist/umd/rxcomp-form.js",
-            "node_modules/swiper/js/swiper.js"
+            "node_modules/rxcomp-form/dist/umd/rxcomp-form.js"
           ],
-          "output": "docs/js/vendors.js",
+          "output": "dist/js/vendors.js",
           "minify": true
         }
       ],
-      "copy": [
-        {
-          "input": "node_modules/@fortawesome/fontawesome-free/**/*.*",
-          "output": "docs/fonts/fontawesome/"
-        }
-      ]
-    },
-    "dist": {
-      "compile": [
-        {
-          "input": "src/js/typescript/main.ts",
-          "output": [
-            {
-              "file": "dist/amd/main.js",
-              "format": "amd"
-            },
-            {
-              "file": "dist/cjs/",
-              "format": "cjs"
-            },
-            {
-              "file": "dist/esm/",
-              "format": "esm"
-            },
-            {
-              "file": "dist/system/main.js",
-              "format": "system"
-            },
-            {
-              "file": "dist/iife/main.js",
-              "format": "iife",
-              "minify": true
-            },
-            {
-              "file": "dist/umd/main.js",
-              "format": "umd",
-              "minify": true
-            }
-          ],
-          "globals": {
-            "rxjs": "rxjs",
-            "rxjs/operators": "rxjs.operators"
-          },
-          "name": "main"
-        }
-      ],
-      "bundle": []
+      "copy": []
     }
   },
   "server": {
-    "root": "./docs",
+    "root": "./dist",
     "path": "/gulp-4-bundler/",
     "host": "localhost",
     "port": 9999,
