@@ -4,7 +4,7 @@
  * License: MIT
  */
 
-(function(rxcomp,rxcompForm,rxcompStore){'use strict';function _inheritsLoose(subClass, superClass) {
+(function(rxcomp,rxcompForm){'use strict';function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
   subClass.__proto__ = superClass;
@@ -42,7 +42,7 @@ AppComponent.meta = {
   return AppModule;
 }(rxcomp.Module);
 AppModule.meta = {
-  imports: [rxcomp.CoreModule, rxcompForm.FormModule, rxcompStore.StoreModule],
+  imports: [rxcomp.CoreModule, rxcompForm.FormModule],
   declarations: [],
   bootstrap: AppComponent
-};rxcomp.Browser.bootstrap(AppModule);}(rxcomp,rxcomp.form,rxcomp.store));
+};rxcomp.Browser.bootstrap(AppModule);}(rxcomp,rxcomp.form));

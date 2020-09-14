@@ -27,7 +27,6 @@
           "output": "docs/js/rxcomp/main_es5_iife.js",
           "globals": {
             "gsap": "gsap",
-            "immer": "immer",
             "rxjs": "rxjs",
             "rxjs/operators": "rxjs.operators",
             "rxcomp": "rxcomp",
@@ -60,21 +59,20 @@
       "bundle": [
         {
           "input": [
-            "node_modules/swiper/css/swiper.css"
+            "node_modules/swiper/css/swiper.css",
+            "node_modules/rxcomp/dist/rxcomp-dark.css"
           ],
           "output": "docs/css/vendors.css",
           "minify": true
         },
         {
           "input": [
-            "node_modules/immer/dist/immer.umd.production.min.js",
-            "node_modules/rxjs/bundles/rxjs.umd.js",
-            "node_modules/rxcomp/dist/iife/rxcomp.js",
-            "node_modules/rxcomp-form/dist/iife/rxcomp-form.js",
-            "node_modules/rxcomp-store/dist/iife/rxcomp-store.js",
-            "node_modules/swiper/js/swiper.js",
             "node_modules/gsap/dist/EasePack.js",
-            "node_modules/gsap/dist/gsap.js"
+            "node_modules/gsap/dist/gsap.js",
+            "node_modules/rxjs/bundles/rxjs.umd.js",
+            "node_modules/rxcomp/dist/umd/rxcomp.js",
+            "node_modules/rxcomp-form/dist/umd/rxcomp-form.js",
+            "node_modules/swiper/js/swiper.js"
           ],
           "output": "docs/js/vendors.js",
           "minify": true
@@ -82,9 +80,7 @@
       ],
       "copy": [
         {
-          "input": [
-            "node_modules/@fortawesome/fontawesome-free/**/*.*"
-          ],
+          "input": "node_modules/@fortawesome/fontawesome-free/**/*.*",
           "output": "docs/fonts/fontawesome/"
         }
       ]

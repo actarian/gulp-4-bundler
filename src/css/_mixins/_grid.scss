@@ -75,19 +75,6 @@
 	max-width: percentage($size / $columns);
 }
 
-@mixin make-col-offset($size, $columns: $grid-columns) {
-	$num: $size / $columns;
-	margin-left: if($num==0, 0, percentage($num));
-}
-
-@mixin as-col($size, $columns: $grid-columns, $gutter: 40px) {
-	flex: 0 0 calc(#{percentage($size / $columns)} - #{$gutter});
-	// Add a `max-width` to ensure content within each column does not blow out
-	// the width of the column. Applies to IE10+ and Firefox. Chrome and Safari
-	// do not appear to require this.
-	max-width: percentage($size / $columns);
-}
-
 // Framework grid generation
 //
 // Used only by Bootstrap to generate the correct number of grid classes given
@@ -176,10 +163,91 @@
 
 					// Avoid emitting useless .offset-0
 					.offset#{$infix}-#{$i} {
-						@include make-col-offset($i, $columns);
+						@include as-offset($i, $columns);
 					}
 				}
 			}
+		}
+	}
+}
+
+@mixin grid-margin($size: '', $gutter-widths: $grid-gutter-widths, $breakpoints: $grid-breakpoints) {
+	@if $size !='' {
+		$gutter: map-get($grid-gutter-widths, $size);
+		margin-left: - $gutter / 2;
+		margin-right: - $gutter / 2;
+	}
+
+	@else {
+
+		@each $breakpoint,
+		$gutter in $gutter-widths {
+			@include media-up($breakpoint, $breakpoints) {
+				margin-left: - $gutter / 2;
+				margin-right: - $gutter / 2;
+			}
+		}
+	}
+}
+
+@mixin grid-padding($size: '', $gutter-widths: $grid-gutter-widths, $breakpoints: $grid-breakpoints) {
+	@if $size !='' {
+		$gutter: map-get($grid-gutter-widths, $size);
+		padding-left: $gutter / 2;
+		padding-right: $gutter / 2;
+	}
+
+	@else {
+
+		@each $breakpoint,
+		$gutter in $gutter-widths {
+			@include media-up($breakpoint, $breakpoints) {
+				padding-left: $gutter / 2;
+				padding-right: $gutter / 2;
+			}
+		}
+	}
+}
+
+@mixin grid-expand($size: '', $gutter-widths: $grid-gutter-widths, $breakpoints: $grid-breakpoints) {
+	@include grid-margin($size);
+	@include grid-padding($size);
+}
+
+@mixin as-offset($size, $columns: $grid-columns) {
+	$num: $size / $columns;
+	margin-left: if($num==0, 0, percentage($num));
+}
+
+@mixin as-col($size, $columns: $grid-columns, $gutter: 40px) {
+	width: 100%;
+	flex: 0 0 calc(#{percentage($size / $columns)} - #{$gutter});
+	// Add a `max-width` to ensure content within each column does not blow out
+	// the width of the column. Applies to IE10+ and Firefox. Chrome and Safari
+	// do not appear to require this.
+	max-width: calc(#{percentage($size / $columns)} - #{$gutter});
+	margin-left: $gutter / 2;
+	margin-right: $gutter / 2;
+}
+
+@mixin expand-right($max-widths: $container-max-widths, $gutter-widths: $grid-gutter-widths, $breakpoints: $grid-breakpoints) {
+
+	@each $breakpoint,
+	$container-max-width in $max-widths {
+		@include media-up($breakpoint, $breakpoints) {
+			$gutter: map-get($grid-gutter-widths, $breakpoint);
+			margin-right: calc(-50vw + (#{$container-max-width} - #{$gutter}) / 2);
+		}
+	}
+}
+
+@mixin expand-left($max-widths: $container-max-widths, $gutter-widths: $grid-gutter-widths, $breakpoints: $grid-breakpoints) {
+
+	@each $breakpoint,
+	$container-max-width in $max-widths {
+		@include media-up($breakpoint, $breakpoints) {
+			$gutter: map-get($grid-gutter-widths, $breakpoint);
+			margin-left: calc(-50vw + (#{$container-max-width} - #{$gutter}) / 2);
 		}
 	}
 }

@@ -286,10 +286,6 @@ button,
 
 .container {
   position: relative; }
-  @media (max-width: 767.98px) {
-    .container {
-      padding-left: 30px;
-      padding-right: 30px; } }
 
 /*
 	%grid-column {
@@ -2290,6 +2286,90 @@ button,
   .offset-xl-11 {
     margin-left: 91.66667%; } }
 
+@media (min-width: 1024px) and (max-width: 1919.98px) {
+  .o-md-1 {
+    order: 1; }
+  .o-md-2 {
+    order: 2; }
+  .o-md-3 {
+    order: 3; }
+  .o-md-4 {
+    order: 4; }
+  .o-md-5 {
+    order: 5; }
+  .o-md-6 {
+    order: 6; }
+  .o-md-7 {
+    order: 7; }
+  .o-md-8 {
+    order: 8; }
+  .o-md-9 {
+    order: 9; }
+  .o-md-10 {
+    order: 10; }
+  .o-md-11 {
+    order: 11; }
+  .o-md-12 {
+    order: 12; }
+  .o-md-13 {
+    order: 13; }
+  .o-md-14 {
+    order: 14; }
+  .o-md-15 {
+    order: 15; }
+  .o-md-16 {
+    order: 16; }
+  .o-md-17 {
+    order: 17; }
+  .o-md-18 {
+    order: 18; }
+  .o-md-19 {
+    order: 19; }
+  .o-md-20 {
+    order: 20; } }
+
+@media (min-width: 768px) and (max-width: 1439.98px) {
+  .o-sm-1 {
+    order: 1; }
+  .o-sm-2 {
+    order: 2; }
+  .o-sm-3 {
+    order: 3; }
+  .o-sm-4 {
+    order: 4; }
+  .o-sm-5 {
+    order: 5; }
+  .o-sm-6 {
+    order: 6; }
+  .o-sm-7 {
+    order: 7; }
+  .o-sm-8 {
+    order: 8; }
+  .o-sm-9 {
+    order: 9; }
+  .o-sm-10 {
+    order: 10; }
+  .o-sm-11 {
+    order: 11; }
+  .o-sm-12 {
+    order: 12; }
+  .o-sm-13 {
+    order: 13; }
+  .o-sm-14 {
+    order: 14; }
+  .o-sm-15 {
+    order: 15; }
+  .o-sm-16 {
+    order: 16; }
+  .o-sm-17 {
+    order: 17; }
+  .o-sm-18 {
+    order: 18; }
+  .o-sm-19 {
+    order: 19; }
+  .o-sm-20 {
+    order: 20; } }
+
 @media (max-width: 1023.98px) {
   .o-1 {
     order: 1; }
@@ -2549,11 +2629,6 @@ ul {
         overflow: hidden;
         text-overflow: ellipsis; }
         .nav--menu > li.group--search .form--control:-ms-input-placeholder {
-          font-size: 19px;
-          font-weight: 500;
-          font-family: var(--font-primary);
-          color: rgba(255, 255, 255, 0.5); }
-        .nav--menu > li.group--search .form--control::-ms-input-placeholder {
           font-size: 19px;
           font-weight: 500;
           font-family: var(--font-primary);
