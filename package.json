@@ -28,6 +28,6 @@
     "swiper": "6.2.0"
   },
   "devDependencies": {
-    "gulpfile-config": "1.0.0-alpha.14"
+    "gulpfile-config": "1.0.0-alpha.16"
   }
 }
