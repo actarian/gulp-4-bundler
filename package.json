@@ -25,11 +25,11 @@
   },
   "dependencies": {
     "gsap": "3.5.1",
-    "rxcomp": "1.0.0-beta.18",
+    "rxcomp": "1.0.0-beta.20",
     "rxcomp-form": "1.0.0-beta.18",
     "rxjs": "6.6.2"
   },
   "devDependencies": {
-    "gulpfile-config": "1.0.0-alpha.14"
+    "gulpfile-config": "1.0.0-alpha.16"
   }
 }
