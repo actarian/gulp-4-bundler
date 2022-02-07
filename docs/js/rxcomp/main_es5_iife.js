@@ -1,13 +1,23 @@
 /**
  * @license gulp-4-bundler v1.0.0
- * (c) 2020 Luca Zampetti <lzampetti@gmail.com>
+ * (c) 2022 Luca Zampetti <lzampetti@gmail.com>
  * License: MIT
  */
 
 (function(rxcomp,rxcompForm){'use strict';function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
-  subClass.__proto__ = superClass;
+
+  _setPrototypeOf(subClass, superClass);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
 }var AppComponent = function (_Component) {
   _inheritsLoose(AppComponent, _Component);
 
@@ -45,4 +55,4 @@ AppModule.meta = {
   imports: [rxcomp.CoreModule, rxcompForm.FormModule],
   declarations: [],
   bootstrap: AppComponent
-};rxcomp.Browser.bootstrap(AppModule);}(rxcomp,rxcomp.form));
+};rxcomp.Browser.bootstrap(AppModule);})(rxcomp,rxcomp.form);

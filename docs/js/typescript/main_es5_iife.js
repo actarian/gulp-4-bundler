@@ -1,6 +1,6 @@
 /**
  * @license gulp-4-bundler v1.0.0
- * (c) 2020 Luca Zampetti <lzampetti@gmail.com>
+ * (c) 2022 Luca Zampetti <lzampetti@gmail.com>
  * License: MIT
  */
 
@@ -20,4 +20,4 @@ var main_es5_iife=(function(){'use strict';var Main = function () {
 
   return Main;
 }();
-var main = new Main();return Main;}());
+new Main();return Main;})();
