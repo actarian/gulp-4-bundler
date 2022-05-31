@@ -1,3 +1,5 @@
+@use "sass:math";
+
 @mixin aspect-grid($w: 4, $h: 3) {
 	display: grid;
 
@@ -41,13 +43,13 @@
 }
 
 @mixin as-aspect-clip-size($w: 4, $h: 3) {
-	padding-top: 100% / $w * $h;
+	padding-top: math.div(100%, $w) * $h;
 }
 
 @mixin aspect-clip($w: 4, $h: 3) {
 	position: relative;
 	width: 100%;
-	padding-top: 100% / $w * $h;
+	padding-top: math.div(100%, $w) * $h;
 	overflow: hidden;
 
 	&>img,
@@ -68,7 +70,7 @@
 @mixin aspect-bottom($w: 4, $h: 3) {
 	position: relative;
 	width: 100%;
-	padding-top: 100% / $w * $h;
+	padding-top: math.div(100%, $w) * $h;
 	overflow: hidden;
 
 	&>img,
@@ -87,7 +89,7 @@
 @mixin aspect-flex($w: 4, $h: 3) {
 	position: relative;
 	width: 100%;
-	padding-top: 100% / $w * $h;
+	padding-top: math.div(100%, $w) * $h;
 	overflow: hidden;
 
 	&>.inner {
