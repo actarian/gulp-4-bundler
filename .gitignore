@@ -1,5 +1,6 @@
 dist/css
 dist/js
+dist/templates
 dist/*.html
 
 # Logs
