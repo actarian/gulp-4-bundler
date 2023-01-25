@@ -26,15 +26,15 @@
     "build": "gulp build --target dist"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.14.0",
-    "gsap": "3.5.1",
-    "rxcomp": "1.0.0-beta.20",
-    "rxcomp-form": "1.0.0-beta.18",
-    "rxjs": "6.6.2",
-    "swiper": "6.2.0",
-    "tslib": "2.3.1"
+    "@fortawesome/fontawesome-free": "^6.2.1",
+    "gsap": "^3.11.4",
+    "rxcomp": "^1.0.0-beta.21",
+    "rxcomp-form": "^1.0.0-beta.18",
+    "rxjs": "^6.6.7",
+    "swiper": "^8.4.6",
+    "tslib": "^2.4.1"
   },
   "devDependencies": {
-    "gulpfile-config": "1.0.0-alpha.19"
+    "gulpfile-config": "^1.0.0-alpha.23"
   }
 }
