@@ -5,19 +5,19 @@
 @import "_mixins/scrollbar";
 
 @mixin animation-delay($item, $count) {
-	$delay: 40ms;
-	$duration: 350ms;
+  $delay: 40ms;
+  $duration: 350ms;
 
-	@for $i from 1 through $count {
-		#{$item}:nth-of-type(#{$i}) {
+  @for $i from 1 through $count {
+    #{$item}:nth-of-type(#{$i}) {
 
-			&>a,
-			&>span {
-				animation-delay: $delay * $i;
-				animation-duration: $duration; // ($duration + ($i - 1) * 0.1);
-			}
-		}
+      &>a,
+      &>span {
+        animation-delay: $delay * $i;
+        animation-duration: $duration; // ($duration + ($i - 1) * 0.1);
+      }
+    }
 
-		// @debug $i;
-	}
+    // @debug $i;
+  }
 }
